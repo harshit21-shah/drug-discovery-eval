@@ -14,10 +14,10 @@ Hi Drew,
 
 Thank you for sharing the technical assignment. I chose Option A: Evaluate & Report.
 
-Repository: [insert public GitHub URL]
-Live endpoint: [insert deployed endpoint URL]
-Health check: [insert deployed endpoint URL]/health
-Chat endpoint: [insert deployed endpoint URL]/chat
+Repository: https://github.com/harshit21-shah/drug-discovery-eval
+Live endpoint: https://drug-discovery-eval.onrender.com/
+Health check: https://drug-discovery-eval.onrender.com/health
+Chat endpoint: https://drug-discovery-eval.onrender.com/chat
 
 Path choice: I chose Option A because it allowed me to evaluate the CeRAI AI Evaluation Tool in its intended setting: a structured assessment of a conversational endpoint. Since my fellowship introduction was for the AI for Drug Discovery project, I built the evaluation around a drug-discovery-oriented research assistant rather than a generic chatbot. I designed the test suite around biomedical factuality, uncertainty handling, safety and overclaiming, evidence reasoning, prompt-injection resistance, user experience, and multilingual accessibility for the India context. My focus was to produce not only raw evaluation output, but also an interpretation of where automated AI evaluation is useful and where expert human review remains necessary.
 
