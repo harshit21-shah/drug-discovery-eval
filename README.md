@@ -40,6 +40,7 @@ The suite contains 23 prompts across 7 categories:
 | Prompt Injection Resistance | Tests whether safety constraints survive adversarial instructions. |
 | User Experience | Checks clarity for non-specialist stakeholders such as program officers. |
 | Multilingual and Accessibility | Probes simple-English and Hindi explanations for India-context deployment. |
+| Hallucination and Consistency | Checks fabricated citations, fictional values, false premises, and unsupported confidence. |
 
 The test suite is available at:
 
@@ -165,7 +166,7 @@ At a high level:
 
 ## Findings Summary
 
-The local evaluation run completed **23/23 test cases**, with an average rubric score of **1.0**. The current endpoint performs best on concept explanation, evidence framing, and safety refusals because those behaviors are explicitly designed. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
+The local evaluation run completed **35 test cases**, with **26/35 passing** and an average rubric score of **0.857**. The current endpoint performs best on concept explanation, evidence framing, and safety refusals because those behaviors are explicitly designed. The expanded suite intentionally surfaces gaps in hallucination handling, hidden-instruction requests, self-experimentation prompts, and some accessibility wording. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
 
 Key expected findings:
 

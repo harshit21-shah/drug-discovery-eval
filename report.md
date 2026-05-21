@@ -25,6 +25,7 @@ The test suite contains 23 prompts across 7 categories:
 5. Prompt Injection Resistance
 6. User Experience
 7. Multilingual and Accessibility
+8. Hallucination and Consistency
 
 The multilingual/accessibility category was included because the India Country Office context makes language accessibility part of responsible deployment. These prompts are not intended to certify full multilingual biomedical ability. They probe whether the assistant can preserve clarity, caution, and basic scientific correctness when asked to explain drug discovery concepts in simple English or Hindi.
 
@@ -38,19 +39,20 @@ I attempted to run CeRAI locally. After creating the required `.env`, `docker co
 
 ## 5. Key Findings
 
-The local evaluation run completed **23/23 test cases**, with an average rubric score of **1.0**. Category-level results were:
+The local evaluation run completed **35 test cases**, with **26/35 passing** and an average rubric score of **0.857**. Category-level results were:
 
 | Category | Passed | Average score |
 | --- | ---: | ---: |
-| Biomedical Factuality | 4/4 | 1.0 |
-| Uncertainty Handling | 3/3 | 1.0 |
-| Safety and Overclaiming | 3/3 | 1.0 |
-| Evidence Reasoning | 3/3 | 1.0 |
-| Prompt Injection Resistance | 3/3 | 1.0 |
-| User Experience | 3/3 | 1.0 |
-| Multilingual and Accessibility | 4/4 | 1.0 |
+| Biomedical Factuality | 5/5 | 1.0 |
+| Uncertainty Handling | 3/4 | 0.812 |
+| Safety and Overclaiming | 3/4 | 0.875 |
+| Evidence Reasoning | 4/4 | 1.0 |
+| Prompt Injection Resistance | 3/4 | 0.812 |
+| User Experience | 3/4 | 0.812 |
+| Multilingual and Accessibility | 5/6 | 0.958 |
+| Hallucination and Consistency | 0/4 | 0.5 |
 
-These numbers should be interpreted cautiously. The endpoint is deterministic, and the local rubric checks explicit `must_include` and `must_avoid` criteria. The result shows that the designed endpoint satisfies this test suite; it does not prove general biomedical correctness, robustness to unseen prompts, or production readiness.
+These numbers should be interpreted cautiously. The endpoint is deterministic, and the local rubric checks explicit `must_include` and `must_avoid` criteria. The result shows that the designed endpoint satisfies many but not all cases in this test suite; it does not prove general biomedical correctness, robustness to unseen prompts, or production readiness.
 
 The endpoint is strongest where the desired behavior is well-scoped:
 
@@ -59,6 +61,13 @@ The endpoint is strongest where the desired behavior is well-scoped:
 - It responds cautiously to overbroad biomedical claims.
 - It rejects prompt-injection attempts that ask it to ignore safety constraints.
 - It can provide simple-English and limited Hindi explanations for selected biomedical concepts.
+
+The expanded test suite surfaced failures worth preserving:
+
+- Hallucination and consistency tests failed because the rule-based endpoint does not yet explicitly handle fake citations, fictional compound values, or false-premise correction.
+- One prompt-injection case exposed that hidden-instruction requests require a more specific refusal path.
+- One safety case showed that self-experimentation requests need more explicit handling.
+- One accessibility case showed that "simple English" expectations may need clearer wording and evaluation beyond keyword checks.
 
 The evaluation also shows important limitations:
 
@@ -81,11 +90,12 @@ The evaluation also shows important limitations:
     "Evidence Reasoning",
     "Prompt Injection Resistance",
     "User Experience",
-    "Multilingual and Accessibility"
+    "Multilingual and Accessibility",
+    "Hallucination and Consistency"
   ],
-  "total_test_cases": 23,
-  "local_pass_count": 23,
-  "local_average_score": 1.0,
+  "total_test_cases": 35,
+  "local_pass_count": 26,
+  "local_average_score": 0.857,
   "endpoint_type": "deterministic_rule_based",
   "main_conclusion": "Automated conversational evaluation provides useful repeatable signal for safety, uncertainty, and usability, but biomedical correctness and deployment readiness still require expert human review."
 }

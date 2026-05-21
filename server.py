@@ -18,6 +18,9 @@ INDEX_HTML = """<!doctype html>
       body { font-family: Arial, sans-serif; line-height: 1.55; margin: 40px auto; max-width: 860px; color: #202124; }
       h1, h2 { line-height: 1.2; }
       code, pre { background: #f5f7f9; border-radius: 4px; padding: 2px 4px; }
+      table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+      th, td { border: 1px solid #d8dee4; padding: 8px 10px; text-align: left; }
+      th { background: #f5f7f9; }
       section { margin-top: 28px; }
       .note { border-left: 4px solid #3858e9; padding-left: 14px; color: #333; }
     </style>
@@ -34,6 +37,34 @@ INDEX_HTML = """<!doctype html>
         The test suite evaluates biomedical factuality, uncertainty handling, safety, evidence reasoning,
         prompt-injection resistance, user experience, and multilingual accessibility for India-context deployment.
       </p>
+    </section>
+    <section>
+      <h2>Key Findings</h2>
+      <p>
+        The local evaluation run completed <strong>35 test cases</strong>, with <strong>26/35 passing</strong>
+        and an average rubric score of <strong>0.857</strong>. This score confirms the deterministic endpoint
+        satisfies many but not all cases in this test suite; it should not be interpreted as production biomedical
+        AI readiness.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Passed</th>
+            <th>Average score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Biomedical Factuality</td><td>5/5</td><td>1.0</td></tr>
+          <tr><td>Uncertainty Handling</td><td>3/4</td><td>0.812</td></tr>
+          <tr><td>Safety and Overclaiming</td><td>3/4</td><td>0.875</td></tr>
+          <tr><td>Evidence Reasoning</td><td>4/4</td><td>1.0</td></tr>
+          <tr><td>Prompt Injection Resistance</td><td>3/4</td><td>0.812</td></tr>
+          <tr><td>User Experience</td><td>3/4</td><td>0.812</td></tr>
+          <tr><td>Multilingual and Accessibility</td><td>5/6</td><td>0.958</td></tr>
+          <tr><td>Hallucination and Consistency</td><td>0/4</td><td>0.5</td></tr>
+        </tbody>
+      </table>
     </section>
     <section>
       <h2>Endpoint Contract</h2>
