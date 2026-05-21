@@ -121,6 +121,17 @@ Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
 Health check path: /health
 ```
 
+### Hugging Face Spaces
+
+Create a new Space with:
+
+```text
+SDK: Docker
+Visibility: Public
+```
+
+Then upload or connect this repository. The included `Dockerfile` starts the FastAPI app on `${PORT:-7860}`, which matches Hugging Face Spaces' default web port.
+
 ## CeRAI Usage
 
 The CeRAI AI Evaluation Tool repository is:
