@@ -5,8 +5,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-
-import requests
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,12 +46,17 @@ def run(endpoint: str, suite_path: Path, output_path: Path) -> dict[str, Any]:
         for test_case in category["test_cases"]:
             payload = {suite["endpoint_contract"]["request_json_key"]: test_case["prompt"]}
             try:
-                http_response = requests.post(endpoint, json=payload, timeout=20)
-                http_response.raise_for_status()
-                body = http_response.json()
+                request = Request(
+                    endpoint,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                with urlopen(request, timeout=20) as http_response:
+                    body = json.loads(http_response.read().decode("utf-8"))
                 response_text = body[suite["endpoint_contract"]["response_json_key"]]
                 error = None
-            except Exception as exc:  # noqa: BLE001 - evaluation output should capture all failures.
+            except (HTTPError, URLError, TimeoutError, KeyError, json.JSONDecodeError) as exc:
                 response_text = ""
                 error = str(exc)
 
@@ -112,4 +117,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

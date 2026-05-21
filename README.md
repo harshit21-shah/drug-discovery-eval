@@ -57,10 +57,10 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Start the endpoint:
+Start the zero-dependency endpoint:
 
 ```bash
-uvicorn app.main:app --reload --port 8000
+python server.py
 ```
 
 Health check:
@@ -108,7 +108,7 @@ railway up
 Railway uses `railway.json` and starts:
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+python server.py
 ```
 
 ### Render
@@ -117,7 +117,7 @@ Create a new Render web service from this public GitHub repository. Render can u
 
 ```text
 Build command: pip install -r requirements.txt
-Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+Start command: python server.py
 Health check path: /health
 ```
 
@@ -130,7 +130,7 @@ SDK: Docker
 Visibility: Public
 ```
 
-Then upload or connect this repository. The included `Dockerfile` starts the FastAPI app on `${PORT:-7860}`, which matches Hugging Face Spaces' default web port.
+Then upload or connect this repository. The included `Dockerfile` starts the zero-dependency HTTP app on `${PORT:-7860}`, which matches Hugging Face Spaces' default web port.
 
 ## CeRAI Usage
 
@@ -184,6 +184,7 @@ See `ai_usage.md`.
 app/
   assistant.py
   main.py
+server.py
 evaluation/
   test_suite.json
   cerai_mapping.md

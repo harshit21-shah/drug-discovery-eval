@@ -1,7 +1,7 @@
 {
   "suite_name": "drug_discovery_research_assistant_v1",
   "endpoint": "http://127.0.0.1:8000/chat",
-  "generated_at": "2026-05-21T08:55:48.206063+00:00",
+  "generated_at": "2026-05-21T15:00:33.342940+00:00",
   "total_tests": 23,
   "pass_count": 23,
   "average_score": 1.0,
