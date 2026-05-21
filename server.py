@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from app.assistant import answer
 
@@ -73,11 +73,25 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler naming.
-        path = urlparse(self.path).path
+        parsed = urlparse(self.path)
+        path = parsed.path
         if path == "/health":
             self._send_json(200, {"status": "ok"})
         elif path == "/":
             self._send_html(200, INDEX_HTML)
+        elif path == "/chat":
+            query = parse_qs(parsed.query)
+            message = query.get("message", [""])[0]
+            if message:
+                self._send_json(200, {"response": answer(message)})
+            else:
+                self._send_json(
+                    200,
+                    {
+                        "usage": "Send POST /chat with JSON body {\"message\":\"...\"}, or open /chat?message=your%20question for a browser-friendly test.",
+                        "example": "/chat?message=What%20is%20target%20identification%20in%20drug%20discovery%3F",
+                    },
+                )
         else:
             self._send_json(404, {"error": "not found"})
 
@@ -115,4 +129,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
