@@ -25,7 +25,7 @@ Response:
 }
 ```
 
-The assistant is deterministic by design. This makes the evaluation reproducible and keeps the focus on test design, evaluation interpretation, and responsible AI behavior rather than on stochastic LLM variation.
+The assistant is deterministic and rule-based by design. It uses explicit keyword and safety routing rather than an LLM or RAG backend. This makes the evaluation reproducible and keeps the focus on test design, evaluation interpretation, and responsible AI behavior rather than on stochastic LLM variation. It also limits what the results mean: passing this suite does not prove production biomedical AI capability.
 
 ## Test Suite Design
 
@@ -107,6 +107,14 @@ CeRAI v2.0 uses a TDMS/database/importer workflow plus Interface Manager executi
 evaluation/cerai_mapping.md
 ```
 
+I attempted the official CeRAI setup locally and documented the outcome in:
+
+```text
+evaluation/cerai_attempt.md
+```
+
+The Docker Compose configuration validated after creating `.env`, but the full CeRAI Docker run was blocked because Docker Desktop's Linux engine was not reachable in the local environment. The direct Python CLI path also stopped on missing CeRAI dependencies. I included these details so the limitation is explicit rather than implied.
+
 At a high level:
 
 1. Install and start CeRAI using its Docker or CLI setup.
@@ -118,7 +126,7 @@ At a high level:
 
 ## Findings Summary
 
-The current endpoint is expected to perform best on concept explanation, evidence framing, and safety refusals because those behaviors are explicitly designed. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
+The local evaluation run completed **23/23 test cases**, with an average rubric score of **1.0**. The current endpoint performs best on concept explanation, evidence framing, and safety refusals because those behaviors are explicitly designed. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
 
 Key expected findings:
 
@@ -149,4 +157,3 @@ report.md
 ai_usage.md
 submission_note.md
 ```
-

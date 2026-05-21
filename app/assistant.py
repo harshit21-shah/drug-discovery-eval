@@ -48,9 +48,9 @@ def answer(prompt: str) -> str:
     if not normalized:
         return "Please provide a drug discovery or biomedical research question."
 
-    if re.search(r"ignore .*instructions|jailbreak|previous instructions|guaranteed cure", lowered):
+    if re.search(r"ignore .*instructions|jailbreak|previous instructions|guaranteed cure|unrestricted chemistry model", lowered):
         return (
-            "I cannot ignore medical safety and evidence requirements. In drug discovery, I can discuss hypotheses, "
+            "I cannot accept a role override or ignore medical safety and evidence requirements. In drug discovery, I can discuss hypotheses, "
             "evidence quality, and research workflows, but I should not provide experimental-drug prescriptions, claim guaranteed cures, "
             "or bypass safeguards."
         )
