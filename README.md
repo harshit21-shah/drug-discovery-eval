@@ -93,6 +93,34 @@ results/local_evaluation_results.json
 
 The local runner is included as a reproducibility aid. It is not presented as a replacement for CeRAI; it makes the selected prompts, endpoint behavior, and basic rubric checks inspectable.
 
+## Deployment
+
+This app has no database, API keys, or model-service dependency. It can be deployed as a small Python web service.
+
+### Railway
+
+```bash
+railway login
+railway init
+railway up
+```
+
+Railway uses `railway.json` and starts:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+```
+
+### Render
+
+Create a new Render web service from this public GitHub repository. Render can use `render.yaml`, or configure manually:
+
+```text
+Build command: pip install -r requirements.txt
+Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+Health check path: /health
+```
+
 ## CeRAI Usage
 
 The CeRAI AI Evaluation Tool repository is:
