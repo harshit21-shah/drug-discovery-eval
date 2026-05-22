@@ -2,21 +2,26 @@
 
 ## 1. System Evaluated
 
-I evaluated a lightweight conversational endpoint called **Drug Discovery Research Assistant**. The endpoint is designed to answer drug-discovery research questions, explain biomedical concepts, structure evidence for target prioritization, and avoid patient-specific medical advice.
+**Drug Discovery Research Assistant** is a conversational REST endpoint for biomedical research support in the AI for Drug Discovery fellowship context.
 
-I chose this system because the fellowship introduction I received was for the **AI for Drug Discovery** project. Evaluating a domain-relevant assistant makes the assignment more representative of the judgment required in that project area than evaluating a generic chatbot.
+| Property | Detail |
+| --- | --- |
+| Chat endpoint | `POST /chat` with `{"message": "..."}` |
+| CeRAI-compatible endpoint | `POST /v1/chat/completions` in OpenAI chat-completions format |
+| Model backend | Groq or OpenAI LLM when `GROQ_API_KEY` or `OPENAI_API_KEY` is supplied |
+| Retrieval | Curated drug-discovery snippets in `app/knowledge_base.py` |
+| Safety | Pre-generation routing for clinical advice, self-experimentation, jailbreaks, fake citations, and false premises |
+| Fallback | Limited deterministic safety/retrieval fallback when no API key is configured |
 
-Important implementation note: the assistant endpoint is deterministic and retrieval-aided. It uses explicit safety routing plus a small curated drug-discovery knowledge base rather than a hosted LLM. I made this choice to keep the evaluation target reproducible within the assignment window and to focus the work on evaluation design, endpoint behavior, and interpretation. This also means the results should not be read as evidence that a production generative biomedical assistant is ready for deployment.
+The assistant is **not** a production clinical system. It demonstrates how a domain-specific conversational endpoint should be evaluated before deployment.
 
 ## 2. Evaluation Question
 
-The central question was:
-
-> Can a drug-discovery-oriented conversational assistant provide useful, cautious, and accessible responses under realistic biomedical conversation scenarios?
+> Can a drug-discovery-oriented LLM assistant provide useful, cautious, and accessible responses under realistic biomedical scenarios, including India-context language and safety edge cases?
 
 ## 3. Test Suite
 
-The test suite contains 35 prompts across 8 categories:
+The main suite contains **35 prompts across 8 categories**:
 
 1. Biomedical Factuality
 2. Uncertainty Handling
@@ -27,86 +32,106 @@ The test suite contains 35 prompts across 8 categories:
 7. Multilingual and Accessibility
 8. Hallucination and Consistency
 
-The multilingual/accessibility category was included because the India Country Office context makes language accessibility part of responsible deployment. These prompts are not intended to certify full multilingual biomedical ability. They probe whether the assistant can preserve clarity, caution, and basic scientific correctness when asked to explain drug discovery concepts in simple English or Hindi.
+I also added `benchmark/drug_discovery_benchmark.json`, a separate **50-item reusable benchmark** covering target identification, biomarkers, ADMET, clinical trials, drug repurposing, and safety/hallucination.
 
-## 4. Evaluation Method
+## 4. CeRAI Tool Engagement
 
-The assignment asks candidates to install, assess, and build on the CeRAI AI Evaluation Tool. I reviewed CeRAI's documentation and mapped my test categories to its responsible AI, safety, language support, conversational quality, and task performance metric areas.
+Repository: https://github.com/cerai-iitm/AIEvaluationTool
 
-I also included a small local evaluator that sends the same prompts to the endpoint and checks responses against transparent `must_include` and `must_avoid` criteria. This local evaluator is not a replacement for CeRAI. It is a reproducible sanity check that makes the test design and endpoint behavior easy to inspect.
+| Step | Status |
+| --- | --- |
+| Documentation review | Completed |
+| Category mapping | `evaluation/cerai_mapping.md` |
+| Datapoint export | 35 cases exported to `evaluation/cerai_datapoints.json` |
+| Docker Compose validation | `docker compose config --quiet` passes |
+| MariaDB service | `docker compose up -d db` starts `aiet-db` |
+| Official local importer | Attempted via `scripts/bootstrap_cerai.py` |
+| Full official metric run | Not completed |
 
-I attempted to run CeRAI locally. After creating the required `.env`, `docker compose config --quiet` validated the Compose configuration, but `docker compose up -d db selenium-browser interface-manager auth-service tdms-backend app-backend` failed because Docker Desktop's Linux engine was not reachable in the local environment. I also tried the direct Python CLI path, which stopped at a missing dependency (`ModuleNotFoundError: No module named 'rich'`). The exact commands and errors are documented in `evaluation/cerai_attempt.md`.
+The official local importer reached CeRAI source code but was blocked by a dependency conflict: `googletrans==4.0.0rc1` pins an old `httpx/httpcore` stack, while CeRAI's Interface Manager imports the modern `OpenAI` SDK class. Upgrading OpenAI fixes `from openai import OpenAI` but breaks `googletrans` with:
 
-To make a future CeRAI run easier, I also added `scripts/export_cerai_datapoints.py`, which converts the 35-case suite into `evaluation/cerai_datapoints.json` using a CeRAI-style datapoint schema.
+```text
+AttributeError: module 'httpcore' has no attribute 'SyncHTTPTransport'
+```
 
-## 5. Key Findings
+I documented this in `evaluation/cerai_attempt.md` and added issue drafts under `evaluation/issues/`.
 
-The local evaluation run completed **35/35 test cases**, with an average rubric score of **1.0**. Category-level results were:
+## 5. Evaluation Method
 
-| Category | Passed | Average score |
+The repo includes a CeRAI-aligned runner:
+
+```bash
+python scripts/run_cerai_evaluation.py --endpoint http://127.0.0.1:8000/chat
+```
+
+It:
+
+1. Sends the suite prompts to the endpoint.
+2. Applies a transparent keyword rubric using `must_include` and `must_avoid`.
+3. Applies LLM-as-judge scoring when `GROQ_API_KEY` or `OPENAI_API_KEY` is configured.
+4. Writes `results/cerai_evaluation_results.json`.
+
+Because the committed environment contains no API key, the verified result below is the **no-secret fallback run**. It is intentionally not described as a full LLM or full official CeRAI result.
+
+## 6. Verified Results
+
+**Run date:** 2026-05-22  
+**Provider:** none configured  
+**Judge:** skipped  
+**Results:** `results/cerai_evaluation_results.json`
+
+| Metric | Value |
+| --- | ---: |
+| Total tests | 35 |
+| Keyword/rubric pass | 20/35 |
+| Average rubric score | 0.818 |
+
+| Category | Passed | Avg score |
 | --- | ---: | ---: |
-| Biomedical Factuality | 5/5 | 1.0 |
-| Uncertainty Handling | 4/4 | 1.0 |
+| Biomedical Factuality | 3/5 | 0.8 |
+| Uncertainty Handling | 1/4 | 0.625 |
 | Safety and Overclaiming | 4/4 | 1.0 |
-| Evidence Reasoning | 4/4 | 1.0 |
+| Evidence Reasoning | 1/4 | 0.719 |
 | Prompt Injection Resistance | 4/4 | 1.0 |
-| User Experience | 4/4 | 1.0 |
-| Multilingual and Accessibility | 6/6 | 1.0 |
+| User Experience | 1/4 | 0.75 |
+| Multilingual and Accessibility | 2/6 | 0.708 |
 | Hallucination and Consistency | 4/4 | 1.0 |
 
-These numbers should be interpreted cautiously. The endpoint is deterministic, and the local rubric checks explicit `must_include` and `must_avoid` criteria. The result shows that the designed endpoint satisfies this test suite; it does not prove general biomedical correctness, robustness to unseen prompts, or production readiness.
+## 7. Interpretation
 
-The endpoint is strongest where the desired behavior is well-scoped:
+- Safety, jailbreak resistance, and hallucination controls are strong even without an API key because they are handled by pre-generation routing.
+- Uncertainty, evidence reasoning, and UX are weak in fallback mode because a real LLM is not configured.
+- This is the central methodological lesson: a fallback endpoint is useful for resilience, but proper AI evaluation requires enabling the LLM backend and judge.
+- The full model-backed run is reproducible by setting `GROQ_API_KEY` or `OPENAI_API_KEY` and rerunning `scripts/run_cerai_evaluation.py`.
 
-- It explains core concepts such as target identification, biomarkers, and ADMET in accessible language.
-- It avoids patient-specific dosage or treatment recommendations.
-- It responds cautiously to overbroad biomedical claims.
-- It rejects prompt-injection attempts that ask it to ignore safety constraints.
-- It can provide simple-English and limited Hindi explanations for selected biomedical concepts.
+## 8. Failure Analysis and Visuals
 
-The expanded test suite initially surfaced failures worth addressing:
+Generated artifacts:
 
-- Hallucination and consistency tests required explicit handling of fake citations, fictional compound values, false premises, and unsupported confidence.
-- One prompt-injection case exposed that hidden-instruction requests require a more specific refusal path.
-- One safety case showed that self-experimentation requests need explicit handling.
-- One accessibility case showed that "simple English" expectations need clearer response routing.
+- `results/failure_analysis.md`
+- `results/pass_rate_by_category.svg`
+- `results/analytics.html`
 
-I addressed these by adding a curated retrieval layer, explicit hallucination/consistency controls, and additional safety routing while preserving the deterministic nature of the endpoint.
+These summarize where the fallback endpoint fails and make the category-level results easier to inspect.
 
-The evaluation also shows important limitations:
-
-- Automated metrics can check consistency, coverage, refusal behavior, and surface-level quality, but they cannot fully validate scientific correctness.
-- Drug discovery claims require expert review, evidence provenance, and ideally links to curated biomedical sources.
-- Multilingual biomedical evaluation should involve native-language review, not only automated scoring.
-- A deterministic retrieval-aided endpoint is useful for reproducible testing, but it does not represent the full risk profile of a generative production LLM.
-
-## 6. Machine-Readable Summary
+## 9. Machine-Readable Summary
 
 ```json
 {
   "path_chosen": "Option A - Evaluate & Report",
   "system": "Drug Discovery Research Assistant",
-  "domain": "AI for Drug Discovery",
-  "test_categories": [
-    "Biomedical Factuality",
-    "Uncertainty Handling",
-    "Safety and Overclaiming",
-    "Evidence Reasoning",
-    "Prompt Injection Resistance",
-    "User Experience",
-    "Multilingual and Accessibility",
-    "Hallucination and Consistency"
-  ],
-  "total_test_cases": 35,
-  "local_pass_count": 35,
-  "local_average_score": 1.0,
-  "endpoint_type": "deterministic_retrieval_aided",
-  "main_conclusion": "Automated conversational evaluation provides useful repeatable signal for safety, uncertainty, and usability, but biomedical correctness and deployment readiness still require expert human review."
+  "endpoint_type": "LLM + RAG + safety routing when configured; deterministic fallback otherwise",
+  "official_cerai_status": "partial; compose and DB verified, importer blocked by dependency conflict",
+  "test_cases": 35,
+  "benchmark_items": 50,
+  "verified_no_secret_pass_count": 20,
+  "verified_no_secret_average_score": 0.818,
+  "results_file": "results/cerai_evaluation_results.json"
 }
 ```
 
-## 7. Conclusion
+## 10. Conclusion
 
-This evaluation suggests that a domain-specific test suite is essential for biomedical conversational AI. A generic chatbot benchmark would miss important failure modes such as overclaiming, unsafe clinical advice, weak uncertainty handling, and poor accessibility for India-context users.
+This submission improves on a simple chatbot evaluation by adding a domain-specific benchmark, an LLM-capable endpoint, CeRAI-compatible datapoints, an OpenAI-compatible endpoint for CeRAI LOCAL integration, LLM-as-judge hooks, failure analysis, and issue drafts for tool limitations.
 
-For a real Gates Foundation deployment, I would extend this work by adding literature-grounded retrieval, expert-reviewed expected answers, native-language review, more adversarial biomedical prompts, and a clearer distinction between research support and clinical decision support.
+The remaining gap is a full official CeRAI run with all services and model credentials available. That gap is documented rather than hidden.

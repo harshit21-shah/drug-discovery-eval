@@ -4,220 +4,160 @@ Technical assignment submission for the Gates Foundation AI Fellows India 2026 p
 
 ## Path Chosen
 
-I chose **Option A - Evaluate & Report**. Since I was being considered for the **AI for Drug Discovery** project, I evaluated a domain-relevant conversational endpoint rather than a generic chatbot. The endpoint is a lightweight drug-discovery research assistant, and the test suite probes whether it gives useful, cautious, and accessible responses in biomedical research scenarios.
+**Option A - Evaluate & Report**, with partial official CeRAI execution and a CeRAI-aligned fallback runner.
 
-## What Is Evaluated
+I evaluated a drug-discovery-focused conversational endpoint rather than a generic chatbot because the fellowship introduction was for the **AI for Drug Discovery** project.
 
-The endpoint exposes a simple chat API:
+## What This Repo Contains
 
-```http
-POST /chat
-Content-Type: application/json
-
-{ "message": "What is target identification in drug discovery?" }
-```
-
-Response:
-
-```json
-{
-  "response": "..."
-}
-```
-
-The assistant is deterministic and retrieval-aided by design. It uses explicit safety routing plus a small curated drug-discovery knowledge base rather than a hosted LLM. This makes the evaluation reproducible and keeps the focus on test design, evaluation interpretation, and responsible AI behavior rather than on stochastic LLM variation. It also limits what the results mean: passing this suite does not prove production biomedical AI capability.
-
-## Test Suite Design
-
-The suite contains 35 prompts across 8 categories:
-
-| Category | Why it matters |
+| Artifact | Path |
 | --- | --- |
-| Biomedical Factuality | Checks core drug discovery concept correctness. |
-| Uncertainty Handling | Tests whether the assistant avoids overconfident biomedical claims. |
-| Safety and Overclaiming | Checks refusal behavior for clinical, dosage, and cure claims. |
-| Evidence Reasoning | Tests whether the assistant can structure target-prioritization evidence. |
-| Prompt Injection Resistance | Tests whether safety constraints survive adversarial instructions. |
-| User Experience | Checks clarity for non-specialist stakeholders such as program officers. |
-| Multilingual and Accessibility | Probes simple-English and Hindi explanations for India-context deployment. |
-| Hallucination and Consistency | Checks fabricated citations, fictional values, false premises, and unsupported confidence. |
+| Live HTTP endpoint | `server.py` |
+| LLM/RAG assistant | `app/assistant.py`, `app/llm_client.py`, `app/knowledge_base.py` |
+| Safety router | `app/safety.py` |
+| 35-case evaluation suite | `evaluation/test_suite.json` |
+| 50-item benchmark | `benchmark/drug_discovery_benchmark.json` |
+| CeRAI datapoints | `evaluation/cerai_datapoints.json` |
+| CeRAI mapping and attempt notes | `evaluation/cerai_mapping.md`, `evaluation/cerai_attempt.md` |
+| CeRAI issue drafts | `evaluation/issues/` |
+| Evaluation runner | `scripts/run_cerai_evaluation.py` |
+| Model comparison runner | `scripts/run_model_comparison.py` |
+| Results and analysis | `results/cerai_evaluation_results.json`, `results/failure_analysis.md`, `results/analytics.html` |
 
-The test suite is available at:
+## Endpoint
+
+The server exposes:
 
 ```text
-evaluation/test_suite.json
+GET  /health
+POST /chat
+GET  /chat?message=...
+POST /v1/chat/completions
 ```
 
-The curated retrieval snippets used by the endpoint are available at:
+`/v1/chat/completions` follows the OpenAI chat-completions shape so CeRAI can call it as a LOCAL/OpenAI-compatible target.
+
+## Model Configuration
+
+No API keys are committed.
+
+Create `.env` from `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Then add either:
 
 ```text
-app/knowledge_base.py
+GROQ_API_KEY=...
 ```
 
-## Local Setup
+or:
 
-Create and activate a Python environment, then install dependencies:
+```text
+OPENAI_API_KEY=...
+```
+
+If no key is set, the server uses a limited deterministic safety/retrieval fallback. That fallback is useful for health checks and safety routing, but it is not a substitute for evaluating a real LLM.
+
+## Run Locally
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-Start the zero-dependency endpoint:
-
-```bash
 python server.py
 ```
 
-Health check:
+Test:
 
 ```bash
 curl http://127.0.0.1:8000/health
-```
-
-Try one chat call:
-
-```bash
 curl -X POST http://127.0.0.1:8000/chat ^
   -H "Content-Type: application/json" ^
-  -d "{\"message\":\"What evidence would you need before prioritizing a gene target?\"}"
+  -d "{\"message\":\"What is target identification in drug discovery?\"}"
 ```
 
-## Local Evaluation Runner
+## Run Evaluation
 
-Run the transparent local rubric evaluator:
+With the server running:
 
 ```bash
-python scripts/run_local_evaluation.py
+python scripts/run_cerai_evaluation.py --endpoint http://127.0.0.1:8000/chat
 ```
 
-It writes:
+This writes:
 
 ```text
-results/local_evaluation_results.json
+results/cerai_evaluation_results.json
 ```
 
-The local runner is included as a reproducibility aid. It is not presented as a replacement for CeRAI; it makes the selected prompts, endpoint behavior, and basic rubric checks inspectable.
+When `GROQ_API_KEY` or `OPENAI_API_KEY` is configured, the runner also performs LLM-as-judge scoring.
+
+## Model Comparison
+
+```bash
+python scripts/run_model_comparison.py --models llama-3.3-70b-versatile,llama-3.1-8b-instant
+```
+
+Outputs:
+
+```text
+results/model_comparison.json
+results/model_comparison.csv
+```
+
+## CeRAI Integration
+
+What was verified:
+
+- CeRAI documentation reviewed.
+- `docker compose config --quiet` passes in the CeRAI repo.
+- `docker compose up -d db` starts the CeRAI MariaDB container.
+- 35 datapoints export to `evaluation/cerai_datapoints.json`.
+- Local importer bootstrap reaches official CeRAI code.
+
+Current blocker:
+
+- Official local importer hits a dependency conflict between `googletrans==4.0.0rc1` and the modern OpenAI SDK expected by CeRAI's Interface Manager.
+
+Details:
+
+```text
+evaluation/cerai_attempt.md
+evaluation/issues/
+```
+
+## Verified No-Secret Result
+
+Because no API key is committed, the verified result is a fallback run:
+
+```text
+35 tests
+20 passed
+average score 0.818
+```
+
+This is intentionally not represented as a full LLM evaluation. A full model-backed run requires setting `GROQ_API_KEY` or `OPENAI_API_KEY`.
 
 ## Deployment
 
-This app has no database, API keys, or model-service dependency. It can be deployed as a small Python web service.
+Render/Railway/Hugging Face configs are included:
 
-### Railway
-
-```bash
-railway login
-railway init
-railway up
+```text
+Dockerfile
+render.yaml
+railway.json
+Procfile
 ```
 
-Railway uses `railway.json` and starts:
+Start command:
 
 ```bash
 python server.py
 ```
 
-### Render
+## Security
 
-Create a new Render web service from this public GitHub repository. Render can use `render.yaml`, or configure manually:
-
-```text
-Build command: pip install -r requirements.txt
-Start command: python server.py
-Health check path: /health
-```
-
-### Hugging Face Spaces
-
-Create a new Space with:
-
-```text
-SDK: Docker
-Visibility: Public
-```
-
-Then upload or connect this repository. The included `Dockerfile` starts the zero-dependency HTTP app on `${PORT:-7860}`, which matches Hugging Face Spaces' default web port.
-
-## CeRAI Usage
-
-The CeRAI AI Evaluation Tool repository is:
-
-```text
-https://github.com/cerai-iitm/AIEvaluationTool
-```
-
-CeRAI v2.0 uses a TDMS/database/importer workflow plus Interface Manager execution. The mapping from this repository's test suite to CeRAI concepts is documented in:
-
-```text
-evaluation/cerai_mapping.md
-```
-
-I attempted the official CeRAI setup locally and documented the outcome in:
-
-```text
-evaluation/cerai_attempt.md
-```
-
-The Docker Compose configuration validated after creating `.env`, but the full CeRAI Docker run was blocked because Docker Desktop's Linux engine was not reachable in the local environment. The direct Python CLI path also stopped on missing CeRAI dependencies. I included these details so the limitation is explicit rather than implied.
-
-This repository also includes a CeRAI datapoint export generated from the test suite:
-
-```text
-evaluation/cerai_datapoints.json
-```
-
-Regenerate it with:
-
-```bash
-python scripts/export_cerai_datapoints.py
-```
-
-At a high level:
-
-1. Install and start CeRAI using its Docker or CLI setup.
-2. Register this endpoint as an API target.
-3. Convert `evaluation/test_suite.json` into CeRAI datapoints.
-4. Run relevant CeRAI plans for responsible AI, safety, conversational quality, language support, and task performance.
-5. Export raw results and place them under `results/`.
-6. Update `report.md` with the final interpretation.
-
-## Findings Summary
-
-The local evaluation run completed **35/35 test cases**, with an average rubric score of **1.0**. The endpoint performs best on concept explanation, evidence framing, safety refusals, prompt-injection handling, and hallucination/consistency controls because those behaviors are explicitly designed and retrieval-supported. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
-
-Key expected findings:
-
-- Automated evaluation is useful for repeatable checks of safety, refusal behavior, and coverage.
-- Biomedical factuality cannot be fully certified by lexical or generic LLM-as-judge metrics.
-- Hindi/simple-English accessibility should be evaluated with native speakers and domain reviewers before deployment.
-- The retrieval-aided implementation improves coverage of hallucination and consistency cases, but it still relies on a small curated knowledge base.
-- Human expert review remains necessary for scientific validity in drug discovery.
-
-## AI Use Disclosure
-
-See `ai_usage.md`.
-
-## Repository Structure
-
-```text
-app/
-  assistant.py
-  knowledge_base.py
-  main.py
-server.py
-evaluation/
-  cerai_datapoints.json
-  cerai_attempt.md
-  test_suite.json
-  cerai_mapping.md
-scripts/
-  export_cerai_datapoints.py
-  run_local_evaluation.py
-results/
-  sample_results.json
-README.md
-report.md
-ai_usage.md
-submission_note.md
-```
+See `SECURITY.md`. Do not commit `.env` or API keys.

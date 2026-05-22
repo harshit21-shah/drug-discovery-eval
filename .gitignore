@@ -8,4 +8,5 @@ results/*.json
 !results/.gitkeep
 !results/sample_results.json
 !results/local_evaluation_results.json
+!results/cerai_evaluation_results.json
 *.log

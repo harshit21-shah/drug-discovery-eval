@@ -1,89 +1,111 @@
 from __future__ import annotations
 
 import json
+import time
+import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
+from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from app.assistant import answer
+from app.llm_client import llm_available, llm_status
 
 
-INDEX_HTML = """<!doctype html>
+ROOT = Path(__file__).resolve().parent
+RESULTS_PATH = ROOT / "results" / "cerai_evaluation_results.json"
+
+
+def _load_summary() -> dict[str, object]:
+    if RESULTS_PATH.exists():
+        return json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
+    fallback = ROOT / "results" / "local_evaluation_results.json"
+    if fallback.exists():
+        return json.loads(fallback.read_text(encoding="utf-8"))
+    return {}
+
+
+def _render_index() -> str:
+    summary = _load_summary()
+    total = summary.get("total_tests", "—")
+    passed = summary.get("pass_count", "—")
+    avg = summary.get("average_combined_score", summary.get("average_score", "—"))
+    status = llm_status()
+    llm_on = (
+        f"enabled ({status['provider']}: {status['model']})"
+        if status["llm_enabled"]
+        else str(status.get("hint", "set GROQ_API_KEY or OPENAI_API_KEY"))
+    )
+    tool = summary.get("evaluation_tool", "Run scripts/run_cerai_evaluation.py")
+
+    rows = ""
+    for name, stats in (summary.get("category_summary") or {}).items():
+        pc = stats.get("pass_count", "—")
+        tc = stats.get("test_count", "—")
+        sc = stats.get("average_combined_score", stats.get("average_score", "—"))
+        rows += f"<tr><td>{name}</td><td>{pc}/{tc}</td><td>{sc}</td></tr>\n"
+
+    return f"""<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Drug Discovery AI Evaluation</title>
     <style>
-      body { font-family: Arial, sans-serif; line-height: 1.55; margin: 40px auto; max-width: 860px; color: #202124; }
-      h1, h2 { line-height: 1.2; }
-      code, pre { background: #f5f7f9; border-radius: 4px; padding: 2px 4px; }
-      table { border-collapse: collapse; width: 100%; margin-top: 12px; }
-      th, td { border: 1px solid #d8dee4; padding: 8px 10px; text-align: left; }
-      th { background: #f5f7f9; }
-      section { margin-top: 28px; }
-      .note { border-left: 4px solid #3858e9; padding-left: 14px; color: #333; }
+      body {{ font-family: Arial, sans-serif; line-height: 1.55; margin: 40px auto; max-width: 900px; color: #202124; }}
+      h1, h2 {{ line-height: 1.2; }}
+      code, pre {{ background: #f5f7f9; border-radius: 4px; padding: 2px 4px; }}
+      table {{ border-collapse: collapse; width: 100%; margin-top: 12px; }}
+      th, td {{ border: 1px solid #d8dee4; padding: 8px 10px; text-align: left; }}
+      th {{ background: #f5f7f9; }}
+      section {{ margin-top: 28px; }}
+      .note {{ border-left: 4px solid #3858e9; padding-left: 14px; color: #333; }}
     </style>
   </head>
   <body>
     <h1>Drug Discovery Research Assistant Evaluation</h1>
     <p class="note">
-      This endpoint supports the Gates Foundation AI Fellows India technical assignment. It exposes
-      <code>POST /chat</code> for conversational evaluation and this page as a live summary endpoint.
+      Gates Foundation AI Fellows India technical assignment. Endpoints:
+      <code>POST /chat</code>, <code>POST /v1/chat/completions</code> (CeRAI LOCAL-compatible).
     </p>
     <section>
-      <h2>Evaluation Focus</h2>
-      <p>
-        The test suite evaluates biomedical factuality, uncertainty handling, safety, evidence reasoning,
-        prompt-injection resistance, user experience, and multilingual accessibility for India-context deployment.
-      </p>
+      <h2>System</h2>
+      <p>LLM-powered drug discovery assistant ({llm_on}) with curated RAG snippets and explicit safety routing.</p>
+      <p>Evaluation pipeline: <strong>{tool}</strong></p>
     </section>
     <section>
-      <h2>Key Findings</h2>
-      <p>
-        The local evaluation run completed <strong>35/35 test cases</strong>, with an average rubric score of
-        <strong>1.0</strong>. This score confirms the deterministic retrieval-aided endpoint satisfies this
-        test suite; it should not be interpreted as production biomedical
-        AI readiness.
-      </p>
+      <h2>Latest Results</h2>
+      <p><strong>{passed}/{total}</strong> passed; average score <strong>{avg}</strong>.</p>
       <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Passed</th>
-            <th>Average score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Biomedical Factuality</td><td>5/5</td><td>1.0</td></tr>
-          <tr><td>Uncertainty Handling</td><td>4/4</td><td>1.0</td></tr>
-          <tr><td>Safety and Overclaiming</td><td>4/4</td><td>1.0</td></tr>
-          <tr><td>Evidence Reasoning</td><td>4/4</td><td>1.0</td></tr>
-          <tr><td>Prompt Injection Resistance</td><td>4/4</td><td>1.0</td></tr>
-          <tr><td>User Experience</td><td>4/4</td><td>1.0</td></tr>
-          <tr><td>Multilingual and Accessibility</td><td>6/6</td><td>1.0</td></tr>
-          <tr><td>Hallucination and Consistency</td><td>4/4</td><td>1.0</td></tr>
-        </tbody>
+        <thead><tr><th>Category</th><th>Passed</th><th>Avg score</th></tr></thead>
+        <tbody>{rows or "<tr><td colspan='3'>Run evaluation to populate results.</td></tr>"}</tbody>
       </table>
     </section>
     <section>
       <h2>Endpoint Contract</h2>
       <pre>POST /chat
-Content-Type: application/json
+{{ "message": "What is target identification in drug discovery?" }}
 
-{ "message": "What is target identification in drug discovery?" }</pre>
+POST /v1/chat/completions  (OpenAI-compatible, for CeRAI LOCAL provider)</pre>
     </section>
     <section>
       <h2>Limitations</h2>
-      <p>
-        This is a deterministic retrieval-aided evaluation target, not a production biomedical model. Its purpose is to make
-        evaluation behavior reproducible while demonstrating how a domain-relevant conversational AI system
-        should be tested before real deployment.
-      </p>
+      <p>Passing this suite does not certify production biomedical correctness. Expert review and CeRAI metric coverage remain required.</p>
     </section>
   </body>
-</html>
-"""
+</html>"""
+
+
+def _extract_user_message(messages: list[object]) -> str:
+    user_parts: list[str] = []
+    for item in messages:
+        if not isinstance(item, dict):
+            continue
+        if item.get("role") == "user":
+            content = item.get("content", "")
+            if isinstance(content, str):
+                user_parts.append(content)
+    return "\n".join(user_parts).strip()
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -103,13 +125,18 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def do_GET(self) -> None:  # noqa: N802 - stdlib handler naming.
+    def _read_json_body(self) -> dict[str, object]:
+        content_length = int(self.headers.get("Content-Length", "0"))
+        raw_body = self.rfile.read(content_length)
+        return json.loads(raw_body.decode("utf-8") or "{}")
+
+    def do_GET(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
         path = parsed.path
         if path == "/health":
-            self._send_json(200, {"status": "ok"})
+            self._send_json(200, {"status": "ok", **llm_status()})
         elif path == "/":
-            self._send_html(200, INDEX_HTML)
+            self._send_html(200, _render_index())
         elif path == "/chat":
             query = parse_qs(parsed.query)
             message = query.get("message", [""])[0]
@@ -119,33 +146,60 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(
                     200,
                     {
-                        "usage": "Send POST /chat with JSON body {\"message\":\"...\"}, or open /chat?message=your%20question for a browser-friendly test.",
-                        "example": "/chat?message=What%20is%20target%20identification%20in%20drug%20discovery%3F",
+                        "usage": 'POST /chat with {"message":"..."} or GET /chat?message=...',
                     },
                 )
         else:
             self._send_json(404, {"error": "not found"})
 
-    def do_POST(self) -> None:  # noqa: N802 - stdlib handler naming.
+    def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
-        if path != "/chat":
-            self._send_json(404, {"error": "not found"})
-            return
-
-        content_length = int(self.headers.get("Content-Length", "0"))
-        raw_body = self.rfile.read(content_length)
         try:
-            payload = json.loads(raw_body.decode("utf-8") or "{}")
+            payload = self._read_json_body()
         except json.JSONDecodeError:
             self._send_json(400, {"error": "invalid json"})
             return
 
-        message = payload.get("message")
-        if not isinstance(message, str):
-            self._send_json(400, {"error": "message must be a string"})
+        if path == "/chat":
+            message = payload.get("message")
+            if not isinstance(message, str):
+                self._send_json(400, {"error": "message must be a string"})
+                return
+            self._send_json(200, {"response": answer(message)})
             return
 
-        self._send_json(200, {"response": answer(message)})
+        if path == "/v1/chat/completions":
+            messages = payload.get("messages", [])
+            if not isinstance(messages, list):
+                self._send_json(400, {"error": "messages must be a list"})
+                return
+            user_message = _extract_user_message(messages)
+            if not user_message:
+                self._send_json(400, {"error": "no user message found"})
+                return
+            text = answer(user_message)
+            model = payload.get("model") if isinstance(payload.get("model"), str) else "drug-discovery-assistant"
+            now = int(time.time())
+            self._send_json(
+                200,
+                {
+                    "id": f"chatcmpl-{uuid.uuid4().hex[:12]}",
+                    "object": "chat.completion",
+                    "created": now,
+                    "model": model,
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {"role": "assistant", "content": text},
+                            "finish_reason": "stop",
+                        }
+                    ],
+                    "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                },
+            )
+            return
+
+        self._send_json(404, {"error": "not found"})
 
     def log_message(self, format: str, *args: object) -> None:
         return
@@ -154,7 +208,7 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     port = int(environ.get("PORT", "8000"))
     server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
-    print(f"Serving on http://0.0.0.0:{port}")
+    print(f"Serving on http://0.0.0.0:{port} (llm={'on' if llm_available() else 'off'})")
     server.serve_forever()
 
 

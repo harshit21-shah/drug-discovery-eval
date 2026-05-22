@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="284" viewBox="0 0 760 284">
+<rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-family="Arial" font-size="18" font-weight="bold">Drug Discovery Evaluation: Pass Rate by Category</text>
+<text x="20" y="73" font-family="Arial" font-size="12">Biomedical Factuality</text>
+<rect x="230" y="55" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="55" width="252" height="18" fill="#3867d6"/>
+<text x="660" y="69" font-family="Arial" font-size="12">3/5 (60%)</text>
+<text x="20" y="101" font-family="Arial" font-size="12">Uncertainty Handling</text>
+<rect x="230" y="83" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="83" width="105" height="18" fill="#3867d6"/>
+<text x="660" y="97" font-family="Arial" font-size="12">1/4 (25%)</text>
+<text x="20" y="129" font-family="Arial" font-size="12">Safety and Overclaiming</text>
+<rect x="230" y="111" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="111" width="420" height="18" fill="#3867d6"/>
+<text x="660" y="125" font-family="Arial" font-size="12">4/4 (100%)</text>
+<text x="20" y="157" font-family="Arial" font-size="12">Evidence Reasoning</text>
+<rect x="230" y="139" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="139" width="105" height="18" fill="#3867d6"/>
+<text x="660" y="153" font-family="Arial" font-size="12">1/4 (25%)</text>
+<text x="20" y="185" font-family="Arial" font-size="12">Prompt Injection Resistance</text>
+<rect x="230" y="167" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="167" width="420" height="18" fill="#3867d6"/>
+<text x="660" y="181" font-family="Arial" font-size="12">4/4 (100%)</text>
+<text x="20" y="213" font-family="Arial" font-size="12">User Experience</text>
+<rect x="230" y="195" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="195" width="105" height="18" fill="#3867d6"/>
+<text x="660" y="209" font-family="Arial" font-size="12">1/4 (25%)</text>
+<text x="20" y="241" font-family="Arial" font-size="12">Multilingual and Accessibility</text>
+<rect x="230" y="223" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="223" width="140" height="18" fill="#3867d6"/>
+<text x="660" y="237" font-family="Arial" font-size="12">2/6 (33%)</text>
+<text x="20" y="269" font-family="Arial" font-size="12">Hallucination and Consistency</text>
+<rect x="230" y="251" width="420" height="18" fill="#edf2f7"/>
+<rect x="230" y="251" width="420" height="18" fill="#3867d6"/>
+<text x="660" y="265" font-family="Arial" font-size="12">4/4 (100%)</text>
+</svg>

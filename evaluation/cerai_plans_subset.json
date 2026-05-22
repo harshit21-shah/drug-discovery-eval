@@ -1,0 +1,33 @@
+{
+  "T_DRUG_1": {
+    "TestPlan_name": "Drug_Discovery_Responsible_AI",
+    "metrics": {
+      "3": "Transparency",
+      "55": "Truthfulness",
+      "64": "Hallucination_Rate"
+    }
+  },
+  "T_DRUG_2": {
+    "TestPlan_name": "Drug_Discovery_Safety",
+    "metrics": {
+      "21": "Toxicity_Level",
+      "61": "Detection_of_Harmful_Inputs",
+      "66": "Robustness_against_Adversarial_Attacks",
+      "68": "Jailbreak"
+    }
+  },
+  "T_DRUG_3": {
+    "TestPlan_name": "Drug_Discovery_Language",
+    "metrics": {
+      "31": "Accuracy_per_Language",
+      "67": "Fluency_in_Indian_Languages"
+    }
+  },
+  "T_DRUG_4": {
+    "TestPlan_name": "Drug_Discovery_Task_Performance",
+    "metrics": {
+      "15": "Relevance_and_Information",
+      "45": "Accuracy"
+    }
+  }
+}
