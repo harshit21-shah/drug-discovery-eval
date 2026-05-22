@@ -10,4 +10,5 @@ results/*.json
 !results/local_evaluation_results.json
 !results/cerai_evaluation_results.json
 !results/benchmark_evaluation_results.json
+!results/model_backed_results.json
 *.log

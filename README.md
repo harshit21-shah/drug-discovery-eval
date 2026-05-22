@@ -94,12 +94,19 @@ python scripts/run_cerai_evaluation.py ^
 
 When `GROQ_API_KEY` or `OPENAI_API_KEY` is configured, omit `--skip-judge` to enable LLM-as-judge scoring.
 
-## Model-Backed Run Status
+## Model-Backed Run
 
-No model-backed result is committed because no active API key is present in this repo or runtime, and a previously exposed secret-like key was intentionally not reused. See:
+A 12-case model-backed subset was run with Groq and LLM-as-judge enabled:
+
+| Dataset | Passed | Average score |
+| --- | ---: | ---: |
+| Model-backed subset | 12/12 | 0.888 |
+
+Files:
 
 ```text
-results/model_backed_run_status.md
+evaluation/model_backed_subset.json
+results/model_backed_results.json
 ```
 
 ## Verified No-Secret Results

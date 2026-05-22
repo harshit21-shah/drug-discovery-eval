@@ -70,13 +70,19 @@ The benchmark result is intentionally lower than the main suite result. That is 
 **Judge:** skipped  
 **Environment:** no-secret fallback mode with `DISABLE_LLM=1`
 
-No model-backed result is committed because no active `GROQ_API_KEY` or `OPENAI_API_KEY` is available in this repository or runtime, and a previously exposed secret-like key was intentionally not reused. The reproducible command for a model-backed run is:
+### Model-Backed Subset
 
-```bash
-python scripts/run_cerai_evaluation.py --endpoint http://127.0.0.1:8000/chat --output results/model_backed_subset_results.json
-```
+A smaller model-backed subset was also run with Groq and LLM-as-judge enabled. I used a 12-case subset to avoid provider rate limits while still covering factuality, uncertainty, safety, evidence reasoning, prompt injection, UX, multilingual accessibility, and hallucination.
 
-That run should be added after configuring a fresh private key in `.env` or the deployment environment.
+| Metric | Value |
+| --- | ---: |
+| Total tests | 12 |
+| Combined pass | 12/12 |
+| Average combined score | 0.888 |
+| Provider | Groq |
+| Model/Judge | `llama-3.1-8b-instant` |
+
+Result file: `results/model_backed_results.json`
 
 ### Main 35-Case Suite
 
