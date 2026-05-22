@@ -71,17 +71,17 @@ AttributeError: module 'httpcore' has no attribute 'SyncHTTPTransport'
 
 This blocks clean local importer execution without isolating dependency groups or using the full Docker app runtime.
 
-## Issue Drafts
+## Filed Issues
 
-I documented concrete issue drafts:
+I filed concrete issues on the CeRAI repository:
 
-```text
-evaluation/issues/001_dependency_conflict_googletrans_openai.md
-evaluation/issues/002_biomedical_metric_gap.md
-evaluation/issues/003_citation_verification.md
-```
+| Issue | Local draft |
+| --- | --- |
+| https://github.com/cerai-iitm/AIEvaluationTool/issues/181 | `evaluation/issues/001_dependency_conflict_googletrans_openai.md` |
+| https://github.com/cerai-iitm/AIEvaluationTool/issues/182 | `evaluation/issues/002_biomedical_metric_gap.md` |
+| https://github.com/cerai-iitm/AIEvaluationTool/issues/183 | `evaluation/issues/003_citation_verification.md` |
 
-These are ready to file against CeRAI if repository issue permissions are available.
+Each issue includes the problem, reproduction steps, evaluation impact, and a suggested fix.
 
 ## How This Submission Still Builds On CeRAI
 

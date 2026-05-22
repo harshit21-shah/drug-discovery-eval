@@ -41,7 +41,11 @@ The official local importer reached CeRAI source code but hit a dependency confl
 AttributeError: module 'httpcore' has no attribute 'SyncHTTPTransport'
 ```
 
-This is documented in `evaluation/cerai_attempt.md`. Issue drafts are included under `evaluation/issues/` for the dependency conflict, biomedical metric gap, and citation-verification gap. They are ready to file on the CeRAI repository when issue permissions are available.
+This is documented in `evaluation/cerai_attempt.md`. I filed detailed issues on the CeRAI repository for the setup blocker, biomedical metric gap, and citation-verification gap:
+
+- https://github.com/cerai-iitm/AIEvaluationTool/issues/181
+- https://github.com/cerai-iitm/AIEvaluationTool/issues/182
+- https://github.com/cerai-iitm/AIEvaluationTool/issues/183
 
 Live endpoint health was verified on 2026-05-22:
 
@@ -140,9 +144,9 @@ CeRAI is useful because it structures endpoint evaluation, datapoints, plans, an
 
 | Limitation | Draft issue | Filed issue URL |
 | --- | --- | --- |
-| Local importer dependency conflict between `googletrans`, `httpx/httpcore`, and the modern OpenAI SDK | `evaluation/issues/001_dependency_conflict_googletrans_openai.md` | Pending manual filing |
-| Need biomedical scientific-validity rubrics for target evidence, ADMET, biomarker validation, clinical-trial reasoning, and translational risk | `evaluation/issues/002_biomedical_metric_gap.md` | Pending manual filing |
-| Need citation verification so biomedical claims can be checked against verifiable references rather than judged only by fluency | `evaluation/issues/003_citation_verification.md` | Pending manual filing |
+| Local importer dependency conflict between `googletrans`, `httpx/httpcore`, and the modern OpenAI SDK | `evaluation/issues/001_dependency_conflict_googletrans_openai.md` | https://github.com/cerai-iitm/AIEvaluationTool/issues/181 |
+| Need biomedical scientific-validity rubrics for target evidence, ADMET, biomarker validation, clinical-trial reasoning, and translational risk | `evaluation/issues/002_biomedical_metric_gap.md` | https://github.com/cerai-iitm/AIEvaluationTool/issues/182 |
+| Need citation verification so biomedical claims can be checked against verifiable references rather than judged only by fluency | `evaluation/issues/003_citation_verification.md` | https://github.com/cerai-iitm/AIEvaluationTool/issues/183 |
 
 I would also add domain failure analysis that distinguishes hallucination, irrelevant retrieval, unsupported certainty, and safe refusal.
 

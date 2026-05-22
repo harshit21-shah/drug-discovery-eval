@@ -151,6 +151,12 @@ evaluation/cerai_attempt.md
 evaluation/issues/
 ```
 
+Filed CeRAI issues:
+
+- https://github.com/cerai-iitm/AIEvaluationTool/issues/181
+- https://github.com/cerai-iitm/AIEvaluationTool/issues/182
+- https://github.com/cerai-iitm/AIEvaluationTool/issues/183
+
 ## Model Comparison
 
 ```bash
