@@ -23,6 +23,14 @@ def _write_failure_analysis(data: dict[str, Any], output: Path, source: Path) ->
         "",
     ]
     for result in failures:
+        reason = str(result.get("llm_judge_reason") or "")
+        if reason == "skipped":
+            reason = (
+                "keyword_only: LLM judge was skipped for this no-secret fallback run; "
+                "the response missed one or more required rubric terms or triggered an avoid term."
+            )
+        elif not reason:
+            reason = "fallback_mismatch: response did not satisfy the transparent keyword rubric."
         response = str(result.get("response", "")).replace("\n", " ")
         if len(response) > 700:
             response = response[:697] + "..."
@@ -38,7 +46,7 @@ def _write_failure_analysis(data: dict[str, Any], output: Path, source: Path) ->
                 "",
                 f"**Keyword hits:** include={result.get('include_hits', [])} avoid={result.get('avoid_hits', [])}",
                 "",
-                f"**Reason:** {result.get('llm_judge_reason', 'keyword rubric miss')}",
+                f"**Reason:** {reason}",
                 "",
             ]
         )

@@ -15,6 +15,11 @@ from app.llm_client import llm_available, llm_status
 ROOT = Path(__file__).resolve().parent
 RESULTS_PATH = ROOT / "results" / "cerai_evaluation_results.json"
 BENCHMARK_PATH = ROOT / "results" / "benchmark_evaluation_results.json"
+STATIC_RESULTS = {
+    "/results/analytics.html": ("text/html; charset=utf-8", ROOT / "results" / "analytics.html"),
+    "/results/pass_rate_by_category.svg": ("image/svg+xml", ROOT / "results" / "pass_rate_by_category.svg"),
+    "/results/failure_analysis.md": ("text/markdown; charset=utf-8", ROOT / "results" / "failure_analysis.md"),
+}
 
 
 def _load_summary() -> dict[str, object]:
@@ -82,6 +87,7 @@ def _render_index() -> str:
       <h2>Latest Results</h2>
       <p>Main suite: <strong>{passed}/{total}</strong> passed; average score <strong>{avg}</strong>.</p>
       <p>Held-out benchmark: <strong>{bench_passed}/{bench_total}</strong> passed; average score <strong>{bench_avg}</strong>.</p>
+      <p><a href="/results/analytics.html">View evaluation analytics</a></p>
       <table>
         <thead><tr><th>Category</th><th>Passed</th><th>Avg score</th></tr></thead>
         <tbody>{rows or "<tr><td colspan='3'>Run evaluation to populate results.</td></tr>"}</tbody>
@@ -131,6 +137,14 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _send_file(self, status: int, content_type: str, path: Path) -> None:
+        body = path.read_bytes()
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def _read_json_body(self) -> dict[str, object]:
         content_length = int(self.headers.get("Content-Length", "0"))
         raw_body = self.rfile.read(content_length)
@@ -143,6 +157,9 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, {"status": "ok", **llm_status()})
         elif path == "/":
             self._send_html(200, _render_index())
+        elif path in STATIC_RESULTS and STATIC_RESULTS[path][1].exists():
+            content_type, file_path = STATIC_RESULTS[path]
+            self._send_file(200, content_type, file_path)
         elif path == "/chat":
             query = parse_qs(parsed.query)
             message = query.get("message", [""])[0]

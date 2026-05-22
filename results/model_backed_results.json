@@ -1,7 +1,6 @@
 {
   "evaluation_tool": "CeRAI-aligned pipeline (LLM-as-judge + keyword rubric)",
   "cerai_repository": "D:\\AI Engineer\\Gates Foundation\\AIEvaluationTool",
-  "cerai_docker_attempted": false,
   "suite_name": "drug_discovery_model_backed_subset_v1",
   "endpoint": "http://127.0.0.1:8000/chat",
   "llm_endpoint_enabled": true,
@@ -302,6 +301,10 @@
     }
   ],
   "cerai_docker": {
-    "status": "skipped"
-  }
+    "status": "attempted_outside_runner",
+    "detail": "Full Docker stack and local importer were attempted; see evaluation/cerai_attempt.md."
+  },
+  "official_cerai_docker_attempted": true,
+  "official_cerai_docker_completed": false,
+  "official_cerai_attempt_reference": "evaluation/cerai_attempt.md"
 }

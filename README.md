@@ -120,6 +120,16 @@ Because no API key is committed, the verified results are fallback runs:
 
 The benchmark is intentionally reported separately because it is a harder held-out check and helps reveal overfitting/circularity risk.
 
+## Live Endpoint Check
+
+Verified on 2026-05-22:
+
+```text
+https://drug-discovery-eval.onrender.com/health
+status: ok
+provider: groq
+```
+
 ## CeRAI Integration
 
 What was verified:

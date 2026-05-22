@@ -43,6 +43,12 @@ AttributeError: module 'httpcore' has no attribute 'SyncHTTPTransport'
 
 This is documented in `evaluation/cerai_attempt.md`. Issue drafts are included under `evaluation/issues/` for the dependency conflict, biomedical metric gap, and citation-verification gap. They are ready to file on the CeRAI repository when issue permissions are available.
 
+Live endpoint health was verified on 2026-05-22:
+
+```text
+https://drug-discovery-eval.onrender.com/health -> status: ok, provider: groq
+```
+
 ## 4. Rebuild: CeRAI-Aligned Alternative
 
 The rebuild includes:
@@ -83,6 +89,8 @@ A smaller model-backed subset was also run with Groq and LLM-as-judge enabled. I
 | Model/Judge | `llama-3.1-8b-instant` |
 
 Result file: `results/model_backed_results.json`
+
+Limitation: the model-backed subset used the same provider family for endpoint generation and LLM-as-judge scoring. This demonstrates model-backed evaluation, but it does not control for judge bias as strongly as an independent judge model would.
 
 ### Main 35-Case Suite
 
@@ -130,9 +138,13 @@ Remaining failures show the limit of a small curated fallback: it can refuse uns
 
 CeRAI is useful because it structures endpoint evaluation, datapoints, plans, and metric execution. For drug discovery, I would extend it in three ways:
 
-- Add biomedical scientific-validity rubrics for target evidence, ADMET, biomarker validation, clinical-trial reasoning, and translational risk.
-- Add citation verification so biomedical claims can be checked against verifiable references rather than judged only by fluency.
-- Add domain failure analysis that distinguishes hallucination, irrelevant retrieval, unsupported certainty, and safe refusal.
+| Limitation | Draft issue | Filed issue URL |
+| --- | --- | --- |
+| Local importer dependency conflict between `googletrans`, `httpx/httpcore`, and the modern OpenAI SDK | `evaluation/issues/001_dependency_conflict_googletrans_openai.md` | Pending manual filing |
+| Need biomedical scientific-validity rubrics for target evidence, ADMET, biomarker validation, clinical-trial reasoning, and translational risk | `evaluation/issues/002_biomedical_metric_gap.md` | Pending manual filing |
+| Need citation verification so biomedical claims can be checked against verifiable references rather than judged only by fluency | `evaluation/issues/003_citation_verification.md` | Pending manual filing |
+
+I would also add domain failure analysis that distinguishes hallucination, irrelevant retrieval, unsupported certainty, and safe refusal.
 
 ## 9. Machine-Readable Summary
 
@@ -148,9 +160,14 @@ CeRAI is useful because it structures endpoint evaluation, datapoints, plans, an
   "held_out_benchmark_tests": 50,
   "held_out_benchmark_pass_count": 20,
   "held_out_benchmark_average_score": 0.745,
+  "model_backed_subset_tests": 12,
+  "model_backed_subset_pass_count": 12,
+  "model_backed_subset_average_score": 0.888,
+  "model_backed_provider": "groq",
   "results_files": [
     "results/cerai_evaluation_results.json",
-    "results/benchmark_evaluation_results.json"
+    "results/benchmark_evaluation_results.json",
+    "results/model_backed_results.json"
   ]
 }
 ```

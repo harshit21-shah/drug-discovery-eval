@@ -207,7 +207,9 @@ def run(endpoint: str, suite_path: Path, output_path: Path, skip_judge: bool) ->
     summary = {
         "evaluation_tool": "CeRAI-aligned pipeline (LLM-as-judge + keyword rubric)",
         "cerai_repository": str(CERAI_ROOT),
-        "cerai_docker_attempted": False,
+        "official_cerai_docker_attempted": True,
+        "official_cerai_docker_completed": False,
+        "official_cerai_attempt_reference": "evaluation/cerai_attempt.md",
         "suite_name": _suite_name(suite, suite_path),
         "endpoint": endpoint,
         "llm_endpoint_enabled": llm_available(),

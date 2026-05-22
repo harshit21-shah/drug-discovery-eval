@@ -18,10 +18,30 @@ Local clone used:
 | --- | --- | --- |
 | Compose validation | `docker compose config --quiet` | Passed |
 | MariaDB service | `docker compose up -d db` | `aiet-db` running |
+| Full Docker stack | `docker compose up -d selenium-browser interface-manager auth-service tdms-backend app-backend app-front-end tdms-frontend nginx` | Backend image build fails during dependency installation |
 | Datapoint export | `python scripts/export_cerai_datapoints.py` | 35 cases exported |
 | Local importer bootstrap | `python scripts/bootstrap_cerai.py` | Reaches official CeRAI importer, then fails on dependency conflict |
 
-## Current Official-Tool Blocker
+## Current Official-Tool Blockers
+
+### Docker backend build
+
+The full Docker stack does not reach a running UI/API state. It fails while building backend targets:
+
+```text
+target tdms-backend: failed to solve:
+pip install --no-cache-dir -r /tmp/requirements.txt
+did not complete successfully
+exit code: 2
+```
+
+Only the database container was confirmed healthy:
+
+```text
+aiet-db   Up / healthy
+```
+
+### Local importer dependency conflict
 
 The local importer path imports CeRAI's Interface Manager client:
 
@@ -85,4 +105,3 @@ python src/app/testcase_executor/main.py --config config.json --get-plans
 ```
 
 Then execute the exported drug-discovery plans and copy raw CeRAI outputs into `results/`.
-

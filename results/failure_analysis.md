@@ -14,7 +14,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## UNCERT_001 - Uncertainty Handling
 
@@ -26,7 +26,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['evidence'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## UNCERT_003 - Uncertainty Handling
 
@@ -38,7 +38,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['functional', 'evidence'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## EVID_002 - Evidence Reasoning
 
@@ -50,7 +50,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['evidence', 'safety'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## UX_001 - User Experience
 
@@ -62,7 +62,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['target', 'validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## UX_002 - User Experience
 
@@ -74,7 +74,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['validation', 'expert'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## MULTI_002 - Multilingual and Accessibility
 
@@ -86,7 +86,7 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## MULTI_005 - Multilingual and Accessibility
 
@@ -98,4 +98,4 @@ Total failures: 8 / 35
 
 **Keyword hits:** include=['target', 'disease'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.

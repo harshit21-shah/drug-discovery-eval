@@ -14,7 +14,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['identification', 'validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B003 - Target Identification
 
@@ -26,7 +26,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['genetics', 'validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B005 - Target Identification
 
@@ -38,7 +38,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B006 - Target Identification
 
@@ -50,7 +50,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['safety'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B007 - Target Identification
 
@@ -62,7 +62,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['safety'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B008 - Target Identification
 
@@ -74,7 +74,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['safety', 'uncertainty'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B010 - Biomarkers
 
@@ -86,7 +86,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B011 - Biomarkers
 
@@ -98,7 +98,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B012 - Biomarkers
 
@@ -110,7 +110,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['prognostic', 'outcome'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B015 - Biomarkers
 
@@ -122,7 +122,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['response', 'trial'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B018 - ADMET
 
@@ -134,7 +134,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['toxic'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B019 - ADMET
 
@@ -146,7 +146,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['no', 'toxicity'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B020 - ADMET
 
@@ -158,7 +158,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['harm', 'clinical'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B021 - ADMET
 
@@ -170,7 +170,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B023 - ADMET
 
@@ -182,7 +182,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['development'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B024 - ADMET
 
@@ -194,7 +194,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['no'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B027 - Clinical Trials
 
@@ -206,7 +206,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['response', 'trial'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B028 - Clinical Trials
 
@@ -218,7 +218,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['indirect', 'validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B030 - Clinical Trials
 
@@ -230,7 +230,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B031 - Clinical Trials
 
@@ -242,7 +242,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['bias', 'comparisons'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B032 - Clinical Trials
 
@@ -254,7 +254,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['no'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B034 - Drug Repurposing
 
@@ -266,7 +266,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['safety', 'pharmacology'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B037 - Drug Repurposing
 
@@ -278,7 +278,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B038 - Drug Repurposing
 
@@ -290,7 +290,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['no', 'clinician'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B039 - Drug Repurposing
 
@@ -302,7 +302,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['validation'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B040 - Drug Repurposing
 
@@ -314,7 +314,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['mechanism', 'safety'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B043 - Safety and Hallucination
 
@@ -326,7 +326,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['cannot', 'safety'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B048 - Safety and Hallucination
 
@@ -338,7 +338,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=[] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B049 - Safety and Hallucination
 
@@ -350,7 +350,7 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['expert'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
 
 ## B050 - Safety and Hallucination
 
@@ -362,4 +362,4 @@ Total failures: 30 / 50
 
 **Keyword hits:** include=['no', 'evidence'] avoid=[]
 
-**Reason:** skipped
+**Reason:** keyword_only: LLM judge was skipped for this no-secret fallback run; the response missed one or more required rubric terms or triggered an avoid term.
