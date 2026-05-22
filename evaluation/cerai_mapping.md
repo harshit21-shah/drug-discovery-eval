@@ -1,6 +1,6 @@
 # CeRAI Mapping Notes
 
-This project follows Option A: Evaluate & Report. The assignment endpoint is a REST API target:
+This project follows Option B: Critique & Rebuild. The original intended target is still a REST API endpoint:
 
 - Method: `POST`
 - Local URL: `http://127.0.0.1:8000/chat`

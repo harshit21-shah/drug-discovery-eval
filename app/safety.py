@@ -20,8 +20,9 @@ def check_safety(prompt: str) -> str | None:
     lowered = prompt.lower()
 
     if re.search(
-        r"ignore .*instructions|jailbreak|previous instructions|guaranteed cure|"
-        r"unrestricted chemistry model|hidden system prompt|safety rules are disabled",
+        r"ignore .*instructions|jailbreak|previous instructions|role override|"
+        r"without restrictions|unrestricted .*model|hidden .*prompt|system prompt|"
+        r"reveal .*instructions|ignore .*safety rules|bypass .*safety|safety rules .*disabled",
         lowered,
     ):
         return (
@@ -37,35 +38,51 @@ def check_safety(prompt: str) -> str | None:
             "and clinical evidence."
         )
 
-    if _has_any(lowered, ["test it on myself", "self-experiment", "experimental molecule online"]):
+    if re.search(r"test .* on myself|self[- ]experiment|experimental .* (myself|online)|small amount .* myself", lowered):
         return (
             "I cannot advise self-experimentation with an experimental molecule. Even a small amount may be unsafe. "
             "This work belongs in regulated research or clinical settings with ethics review and qualified oversight."
         )
 
-    if _has_any(
+    asks_for_unverified_citation = re.search(
+        r"\bcite\b.*\b(paper|study|article|journal|nature)\b|"
+        r"\bproving?\b.*\b(cures?|guarantees?)\b",
         lowered,
-        ["cite the 2026 nature paper", "target x cures", "fictional compound", "harshitinib", "exact ic50"],
-    ):
+    )
+    asks_for_fabricated_value = re.search(
+        r"\bfictional\b|\bmade[- ]?up\b|"
+        r"\bexact\b.*\b(ic50|ki|kd|ec50)\b|"
+        r"\b(ic50|ki|kd|ec50)\b.*\b(value|values|exact)\b",
+        lowered,
+    )
+    if asks_for_unverified_citation or asks_for_fabricated_value:
         return (
             "I cannot verify that citation or fabricate exact IC50 values from the prompt. If the compound or "
             "paper is fictional or unverified, I should say so, avoid invented numbers or citations, and request "
             "a verifiable source."
         )
 
-    if "earlier you said brca1 is always" in lowered:
+    if re.search(r"\bearlier you said\b|\byou said\b.*\balways\b", lowered):
         return (
             "That is a false premise. BRCA1 relevance is context dependent and should be evaluated using mechanism, "
-            "patient subgroup, safety, and validation evidence—not treated as a universal target."
+            "patient subgroup, safety, and validation evidence, not treated as a universal target."
         )
 
-    if "lacks evidence" in lowered and "sound confident" in lowered:
+    if re.search(r"\bweak evidence\b|\blacks evidence\b|\bsound confident\b|\bunsupported confidence\b", lowered):
         return (
             "No. If a response lacks evidence, the assistant should not use unsupported certainty. It should state "
             "uncertainty, explain what evidence is missing, and recommend expert review."
         )
 
-    if _has_any(lowered, ["dosage", "dose", "patient", "prescribe", "treat my", "which drug should i take"]):
+    patient_specific_advice = re.search(
+        r"\b(dosage|dose|prescribe)\b|"
+        r"\bwhich drug should i take\b|"
+        r"\btreat my\b|"
+        r"\brecommend .* (for|to) .*patient\b|"
+        r"\bwhat .* should .*patient .*take\b",
+        lowered,
+    )
+    if patient_specific_advice:
         return SAFETY_MESSAGE
 
     return None

@@ -31,6 +31,45 @@ DEFAULT_OUTPUT = ROOT / "results" / "cerai_evaluation_results.json"
 CERAI_ROOT = Path(os.getenv("CERAI_ROOT", ROOT.parent / "AIEvaluationTool"))
 
 
+def _iter_cases(suite: dict[str, Any]) -> list[dict[str, Any]]:
+    """Normalize either the 35-case suite schema or the 50-item benchmark schema."""
+    cases: list[dict[str, Any]] = []
+    if "categories" in suite:
+        for category in suite["categories"]:
+            for test_case in category["test_cases"]:
+                cases.append(
+                    {
+                        "id": test_case["id"],
+                        "category": category["name"],
+                        "prompt": test_case["prompt"],
+                        "expected_behavior": test_case.get("expected_behavior", ""),
+                        "must_include": test_case.get("must_include", []),
+                        "must_avoid": test_case.get("must_avoid", []),
+                    }
+                )
+        return cases
+
+    if "items" in suite:
+        for item in suite["items"]:
+            cases.append(
+                {
+                    "id": item["id"],
+                    "category": item["category"],
+                    "prompt": item["question"],
+                    "expected_behavior": item.get("ground_truth", ""),
+                    "must_include": item.get("must_include", []),
+                    "must_avoid": item.get("must_avoid", []),
+                }
+            )
+        return cases
+
+    raise ValueError("Suite must contain either 'categories' or 'items'.")
+
+
+def _suite_name(suite: dict[str, Any], suite_path: Path) -> str:
+    return suite.get("suite_name") or suite.get("name") or suite_path.stem
+
+
 def _post_chat(endpoint: str, message: str) -> tuple[str, str | None]:
     payload = {"message": message}
     try:
@@ -114,62 +153,62 @@ def run(endpoint: str, suite_path: Path, output_path: Path, skip_judge: bool) ->
     from app.llm_client import get_llm_settings, llm_available
 
     suite = json.loads(suite_path.read_text(encoding="utf-8"))
+    cases = _iter_cases(suite)
     results: list[dict[str, Any]] = []
 
-    for category in suite["categories"]:
-        for test_case in category["test_cases"]:
-            response, error = _post_chat(endpoint, test_case["prompt"])
-            keyword = _keyword_score(
+    for test_case in cases:
+        response, error = _post_chat(endpoint, test_case["prompt"])
+        keyword = _keyword_score(
+            response,
+            test_case.get("must_include", []),
+            test_case.get("must_avoid", []),
+        )
+        judge = (
+            {"llm_judge_score": None, "llm_judge_passed": None, "llm_judge_reason": "skipped"}
+            if skip_judge
+            else _llm_judge_score(
+                test_case["prompt"],
                 response,
-                test_case.get("must_include", []),
-                test_case.get("must_avoid", []),
+                test_case["expected_behavior"],
+                test_case["category"],
             )
-            judge = (
-                {"llm_judge_score": None, "llm_judge_passed": None, "llm_judge_reason": "skipped"}
-                if skip_judge
-                else _llm_judge_score(
-                    test_case["prompt"],
-                    response,
-                    test_case["expected_behavior"],
-                    category["name"],
-                )
-            )
-            combined_score = keyword["keyword_score"]
-            if judge.get("llm_judge_score") is not None:
-                combined_score = round((keyword["keyword_score"] + judge["llm_judge_score"]) / 2, 3)
+        )
+        combined_score = keyword["keyword_score"]
+        if judge.get("llm_judge_score") is not None:
+            combined_score = round((keyword["keyword_score"] + judge["llm_judge_score"]) / 2, 3)
 
-            results.append(
-                {
-                    "id": test_case["id"],
-                    "category": category["name"],
-                    "prompt": test_case["prompt"],
-                    "expected_behavior": test_case["expected_behavior"],
-                    "response": response,
-                    "error": error,
-                    **keyword,
-                    **judge,
-                    "combined_score": combined_score,
-                    "passed": _combined_pass(keyword, judge),
-                }
-            )
+        results.append(
+            {
+                "id": test_case["id"],
+                "category": test_case["category"],
+                "prompt": test_case["prompt"],
+                "expected_behavior": test_case["expected_behavior"],
+                "response": response,
+                "error": error,
+                **keyword,
+                **judge,
+                "combined_score": combined_score,
+                "passed": _combined_pass(keyword, judge),
+            }
+        )
 
     category_summary: dict[str, Any] = {}
-    for category in suite["categories"]:
-        cat_results = [r for r in results if r["category"] == category["name"]]
-        category_summary[category["name"]] = {
+    for category_name in sorted({case["category"] for case in cases}):
+        cat_results = [r for r in results if r["category"] == category_name]
+        category_summary[category_name] = {
             "test_count": len(cat_results),
             "pass_count": sum(1 for r in cat_results if r["passed"]),
             "average_combined_score": round(
                 sum(r["combined_score"] for r in cat_results) / max(len(cat_results), 1),
                 3,
-            ),
+            )
         }
 
     summary = {
         "evaluation_tool": "CeRAI-aligned pipeline (LLM-as-judge + keyword rubric)",
         "cerai_repository": str(CERAI_ROOT),
         "cerai_docker_attempted": False,
-        "suite_name": suite["suite_name"],
+        "suite_name": _suite_name(suite, suite_path),
         "endpoint": endpoint,
         "llm_endpoint_enabled": llm_available(),
         "llm_provider": (get_llm_settings().provider if get_llm_settings() else None),

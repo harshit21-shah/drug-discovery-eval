@@ -14,6 +14,7 @@ from app.llm_client import llm_available, llm_status
 
 ROOT = Path(__file__).resolve().parent
 RESULTS_PATH = ROOT / "results" / "cerai_evaluation_results.json"
+BENCHMARK_PATH = ROOT / "results" / "benchmark_evaluation_results.json"
 
 
 def _load_summary() -> dict[str, object]:
@@ -27,9 +28,13 @@ def _load_summary() -> dict[str, object]:
 
 def _render_index() -> str:
     summary = _load_summary()
+    benchmark = json.loads(BENCHMARK_PATH.read_text(encoding="utf-8")) if BENCHMARK_PATH.exists() else {}
     total = summary.get("total_tests", "—")
     passed = summary.get("pass_count", "—")
     avg = summary.get("average_combined_score", summary.get("average_score", "—"))
+    bench_total = benchmark.get("total_tests", "-")
+    bench_passed = benchmark.get("pass_count", "-")
+    bench_avg = benchmark.get("average_combined_score", "-")
     status = llm_status()
     llm_on = (
         f"enabled ({status['provider']}: {status['model']})"
@@ -65,7 +70,7 @@ def _render_index() -> str:
   <body>
     <h1>Drug Discovery Research Assistant Evaluation</h1>
     <p class="note">
-      Gates Foundation AI Fellows India technical assignment. Endpoints:
+      Gates Foundation AI Fellows India technical assignment. Path: Option B - Critique & Rebuild. Endpoints:
       <code>POST /chat</code>, <code>POST /v1/chat/completions</code> (CeRAI LOCAL-compatible).
     </p>
     <section>
@@ -75,7 +80,8 @@ def _render_index() -> str:
     </section>
     <section>
       <h2>Latest Results</h2>
-      <p><strong>{passed}/{total}</strong> passed; average score <strong>{avg}</strong>.</p>
+      <p>Main suite: <strong>{passed}/{total}</strong> passed; average score <strong>{avg}</strong>.</p>
+      <p>Held-out benchmark: <strong>{bench_passed}/{bench_total}</strong> passed; average score <strong>{bench_avg}</strong>.</p>
       <table>
         <thead><tr><th>Category</th><th>Passed</th><th>Avg score</th></tr></thead>
         <tbody>{rows or "<tr><td colspan='3'>Run evaluation to populate results.</td></tr>"}</tbody>

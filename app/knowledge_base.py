@@ -14,19 +14,29 @@ class KnowledgeEntry:
 KNOWLEDGE_BASE: tuple[KnowledgeEntry, ...] = (
     KnowledgeEntry(
         title="Target identification and validation",
-        keywords=("target", "identification", "validation", "disease", "biology"),
+        keywords=("target", "identification", "validation", "disease", "biology", "druggable", "genetics"),
         summary=(
-            "Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether "
-            "modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, "
-            "and reproducible experiments."
+            "Target identification proposes a disease-relevant molecule or pathway for therapeutic modulation. Target validation "
+            "then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, "
+            "functional evidence, safety assessment, and reproducible experiments."
+        ),
+    ),
+    KnowledgeEntry(
+        title="Biomarkers",
+        keywords=("biomarker", "biomarkers", "her2", "msi", "prognostic", "predictive", "stratification"),
+        summary=(
+            "A biomarker is a measurable biological signal related to disease state, prognosis, or treatment response. "
+            "Predictive biomarkers indicate likely response to a therapy, prognostic biomarkers relate to outcome, and "
+            "deployment requires analytical validation, clinical relevance, population applicability, and safe decision use."
         ),
     ),
     KnowledgeEntry(
         title="ADMET",
-        keywords=("admet", "absorption", "distribution", "metabolism", "excretion", "toxicity"),
+        keywords=("admet", "absorption", "distribution", "metabolism", "excretion", "toxicity", "potency"),
         summary=(
             "ADMET evaluates absorption, distribution, metabolism, excretion, and toxicity. It helps decide whether a compound "
-            "can reach the right tissue, remain active long enough, be cleared safely, and avoid harmful effects."
+            "can reach the right tissue, remain active long enough, be cleared safely, avoid harmful effects, and remain viable "
+            "for development rather than optimizing only for potency."
         ),
     ),
     KnowledgeEntry(
@@ -46,6 +56,24 @@ KNOWLEDGE_BASE: tuple[KnowledgeEntry, ...] = (
         ),
     ),
     KnowledgeEntry(
+        title="Clinical trials",
+        keywords=("clinical", "trial", "phase", "randomization", "surrogate", "consent", "patient"),
+        summary=(
+            "Clinical trials evaluate interventions in humans. Phase I emphasizes safety and dose, Phase II examines preliminary "
+            "efficacy and safety, randomization reduces bias in comparisons, surrogate endpoints are indirect measures that need "
+            "validation, and patient-specific trial-drug decisions require clinician oversight and informed consent."
+        ),
+    ),
+    KnowledgeEntry(
+        title="Drug repurposing",
+        keywords=("repurposing", "off-label", "knowledge graph", "literature mining", "existing drug"),
+        summary=(
+            "Drug repurposing investigates whether an existing drug can help a new disease or indication. It can be faster when "
+            "safety, pharmacology, and manufacturing data exist, but AI-generated hypotheses still require mechanism support, "
+            "exposure checks, experimental validation, clinical feasibility, and expert review."
+        ),
+    ),
+    KnowledgeEntry(
         title="Hallucination control",
         keywords=("citation", "fictional", "ic50", "false premise", "confidence", "unsupported"),
         summary=(
@@ -61,12 +89,22 @@ def _tokens(text: str) -> set[str]:
 
 
 def retrieve(prompt: str, limit: int = 2) -> list[KnowledgeEntry]:
+    lowered = prompt.lower()
     prompt_tokens = _tokens(prompt)
     scored: list[tuple[int, KnowledgeEntry]] = []
     for entry in KNOWLEDGE_BASE:
-        keyword_hits = sum(1 for keyword in entry.keywords if keyword in prompt.lower())
-        token_hits = len(prompt_tokens.intersection(_tokens(entry.summary)))
-        score = (keyword_hits * 3) + token_hits
+        title = entry.title.lower()
+        title_tokens = _tokens(entry.title)
+        keyword_hits = sum(1 for keyword in entry.keywords if keyword in lowered)
+        title_token_hits = len(prompt_tokens.intersection(title_tokens))
+        summary_token_hits = len(prompt_tokens.intersection(_tokens(entry.summary)))
+
+        score = (keyword_hits * 5) + (title_token_hits * 4) + summary_token_hits
+        if title in lowered:
+            score += 8
+        for keyword in entry.keywords:
+            if re.search(rf"\b{re.escape(keyword)}\b", lowered):
+                score += 2
         if score:
             scored.append((score, entry))
     scored.sort(key=lambda item: item[0], reverse=True)
@@ -82,4 +120,3 @@ def retrieval_answer(prompt: str) -> str | None:
         f"Using the curated evaluation knowledge base: {evidence} "
         "This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert."
     )
-

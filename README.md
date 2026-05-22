@@ -4,25 +4,26 @@ Technical assignment submission for the Gates Foundation AI Fellows India 2026 p
 
 ## Path Chosen
 
-**Option A - Evaluate & Report**, with partial official CeRAI execution and a CeRAI-aligned fallback runner.
+**Option B - Critique & Rebuild.**
 
-I evaluated a drug-discovery-focused conversational endpoint rather than a generic chatbot because the fellowship introduction was for the **AI for Drug Discovery** project.
+I started with the intended CeRAI evaluation path, but official execution was blocked by a reproducible dependency conflict. Instead of hiding that gap, this repo documents the CeRAI blocker, critiques the tool for biomedical use, and provides a minimal CeRAI-aligned evaluation harness for a drug-discovery conversational endpoint.
 
 ## What This Repo Contains
 
 | Artifact | Path |
 | --- | --- |
-| Live HTTP endpoint | `server.py` |
+| Canonical live HTTP endpoint | `server.py` |
 | LLM/RAG assistant | `app/assistant.py`, `app/llm_client.py`, `app/knowledge_base.py` |
-| Safety router | `app/safety.py` |
+| Pattern-based safety router | `app/safety.py` |
 | 35-case evaluation suite | `evaluation/test_suite.json` |
-| 50-item benchmark | `benchmark/drug_discovery_benchmark.json` |
+| 50-item held-out benchmark | `benchmark/drug_discovery_benchmark.json` |
 | CeRAI datapoints | `evaluation/cerai_datapoints.json` |
-| CeRAI mapping and attempt notes | `evaluation/cerai_mapping.md`, `evaluation/cerai_attempt.md` |
+| CeRAI mapping and setup notes | `evaluation/cerai_mapping.md`, `evaluation/cerai_attempt.md` |
 | CeRAI issue drafts | `evaluation/issues/` |
 | Evaluation runner | `scripts/run_cerai_evaluation.py` |
+| Analysis generator | `scripts/generate_analysis_artifacts.py` |
 | Model comparison runner | `scripts/run_model_comparison.py` |
-| Results and analysis | `results/cerai_evaluation_results.json`, `results/failure_analysis.md`, `results/analytics.html` |
+| Results and analysis | `results/cerai_evaluation_results.json`, `results/benchmark_evaluation_results.json`, `results/failure_analysis.md`, `results/analytics.html` |
 
 ## Endpoint
 
@@ -41,13 +42,7 @@ POST /v1/chat/completions
 
 No API keys are committed.
 
-Create `.env` from `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
-Then add either:
+Create `.env` from `.env.example` and add either:
 
 ```text
 GROQ_API_KEY=...
@@ -59,7 +54,7 @@ or:
 OPENAI_API_KEY=...
 ```
 
-If no key is set, the server uses a limited deterministic safety/retrieval fallback. That fallback is useful for health checks and safety routing, but it is not a substitute for evaluating a real LLM.
+If no key is set, the server uses a limited deterministic safety/retrieval fallback. That fallback is useful for health checks and reproducibility, but it is not a substitute for evaluating a real LLM.
 
 ## Run Locally
 
@@ -84,29 +79,31 @@ curl -X POST http://127.0.0.1:8000/chat ^
 With the server running:
 
 ```bash
-python scripts/run_cerai_evaluation.py --endpoint http://127.0.0.1:8000/chat
+python scripts/run_cerai_evaluation.py --endpoint http://127.0.0.1:8000/chat --skip-judge
 ```
 
-This writes:
-
-```text
-results/cerai_evaluation_results.json
-```
-
-When `GROQ_API_KEY` or `OPENAI_API_KEY` is configured, the runner also performs LLM-as-judge scoring.
-
-## Model Comparison
+Run the held-out benchmark:
 
 ```bash
-python scripts/run_model_comparison.py --models llama-3.3-70b-versatile,llama-3.1-8b-instant
+python scripts/run_cerai_evaluation.py ^
+  --endpoint http://127.0.0.1:8000/chat ^
+  --skip-judge ^
+  --suite benchmark/drug_discovery_benchmark.json ^
+  --output results/benchmark_evaluation_results.json
 ```
 
-Outputs:
+When `GROQ_API_KEY` or `OPENAI_API_KEY` is configured, omit `--skip-judge` to enable LLM-as-judge scoring.
 
-```text
-results/model_comparison.json
-results/model_comparison.csv
-```
+## Verified No-Secret Results
+
+Because no API key is committed, the verified results are fallback runs:
+
+| Dataset | Passed | Average score |
+| --- | ---: | ---: |
+| Main 35-case suite | 27/35 | 0.914 |
+| Held-out 50-item benchmark | 20/50 | 0.745 |
+
+The benchmark is intentionally reported separately because it is a harder held-out check and helps reveal overfitting/circularity risk.
 
 ## CeRAI Integration
 
@@ -129,17 +126,18 @@ evaluation/cerai_attempt.md
 evaluation/issues/
 ```
 
-## Verified No-Secret Result
+## Model Comparison
 
-Because no API key is committed, the verified result is a fallback run:
-
-```text
-35 tests
-20 passed
-average score 0.818
+```bash
+python scripts/run_model_comparison.py --models llama-3.3-70b-versatile,llama-3.1-8b-instant
 ```
 
-This is intentionally not represented as a full LLM evaluation. A full model-backed run requires setting `GROQ_API_KEY` or `OPENAI_API_KEY`.
+Outputs:
+
+```text
+results/model_comparison.json
+results/model_comparison.csv
+```
 
 ## Deployment
 

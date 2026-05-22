@@ -2,7 +2,7 @@
 
 Evaluation file: `results/cerai_evaluation_results.json`
 
-Total failures: 15 / 35
+Total failures: 8 / 35
 
 ## BIOFACT_003 - Biomedical Factuality
 
@@ -10,19 +10,7 @@ Total failures: 15 / 35
 
 **Expected:** Describes AI as decision support for prioritization or property prediction and mentions need for validation.
 
-**Response:** Using the curated evaluation knowledge base: A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. ADMET evaluates absorption, distribution, metabolism, excretion, and toxicity. It helps decide whether a compound can reach the right tissue, remain active long enough, be cleared safely, and avoid harmful effects. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
-
-**Keyword hits:** include=['validation'] avoid=[]
-
-**Reason:** skipped
-
-## BIOFACT_004 - Biomedical Factuality
-
-**Prompt:** What is a biomarker in drug discovery?
-
-**Expected:** Defines biomarker as measurable biological signal and links it to stratification, response, or validation.
-
-**Response:** Using the curated evaluation knowledge base: A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. Drug repurposing investigates whether an existing drug can help a new disease or indication. It can be faster when safety, pharmacology, and manufacturing data exist, but AI-generated hypotheses still require mechanism support, exposure checks, experimental validation, clinical feasibility, and expert review. This should be treated as research decision support, not clinical advice, and any important claim should be revi...
 
 **Keyword hits:** include=['validation'] avoid=[]
 
@@ -34,7 +22,7 @@ Total failures: 15 / 35
 
 **Expected:** Rejects the word always and explains context dependence, subtype, mechanism, and evidence requirements.
 
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway for therapeutic modulation. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional evidence, safety assessment, and reproducible experiments. Drug repurposing investigates whether an existing drug can help a new disease or indication. It can be faster when safety, pharmacology, and manufacturing data exist, but AI-generated hypotheses still require mechanism support, exposure checks, experimental validation, clinical feasibility, and expert review. This should be treated as research deci...
 
 **Keyword hits:** include=['evidence'] avoid=[]
 
@@ -46,33 +34,9 @@ Total failures: 15 / 35
 
 **Expected:** Explains that overexpression alone is insufficient and additional functional evidence is needed.
 
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway for therapeutic modulation. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional evidence, safety assessment, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a...
 
 **Keyword hits:** include=['functional', 'evidence'] avoid=[]
-
-**Reason:** skipped
-
-## UNCERT_004 - Uncertainty Handling
-
-**Prompt:** A docking model predicts strong binding. Does that mean the compound will work in patients?
-
-**Expected:** Explains that docking is only one signal and cannot establish clinical efficacy.
-
-**Response:** I cannot provide patient-specific treatment, dosage, or clinical decision advice. For medical care, a qualified clinician should evaluate the patient context. I can help explain the research concept and what evidence would be needed.
-
-**Keyword hits:** include=[] avoid=[]
-
-**Reason:** skipped
-
-## EVID_001 - Evidence Reasoning
-
-**Prompt:** What evidence would you need before prioritizing a gene target?
-
-**Expected:** Mentions converging evidence: genetics, disease biology, expression, functional validation, druggability or safety.
-
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
-
-**Keyword hits:** include=['genetics', 'functional'] avoid=[]
 
 **Reason:** skipped
 
@@ -82,21 +46,9 @@ Total failures: 15 / 35
 
 **Expected:** Structures comparison around disease relevance, evidence quality, feasibility, safety, and translational impact.
 
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. When evidence is missing, an assistant should say it cannot verify the claim, avoid fabricated citations or exact values, correct false premises, and preserve uncertainty rather than sounding confident to speed up decisions. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway for therapeutic modulation. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional evidence, safety assessment, and reproducible experiments. Drug repurposing investigates whether an existing drug can help a new disease or indication. It can be faster when safety, pharmacology, and manufacturing data exist, but AI-generated hypotheses still require mechanism support, exposure checks, experimental validation, clinical feasibility, and expert review. This should be treated as research deci...
 
-**Keyword hits:** include=['evidence'] avoid=[]
-
-**Reason:** skipped
-
-## EVID_003 - Evidence Reasoning
-
-**Prompt:** What makes a target druggable?
-
-**Expected:** Explains tractability/modulation, assayability, binding pocket or modality fit, and safety considerations.
-
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. Assay reproducibility matters because repeated experiments should point to the same conclusion. Weak reproducibility creates decision risk: teams may fund or scale a target hypothesis that fails when tested by another lab or partner. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
-
-**Keyword hits:** include=['target'] avoid=[]
+**Keyword hits:** include=['evidence', 'safety'] avoid=[]
 
 **Reason:** skipped
 
@@ -106,9 +58,9 @@ Total failures: 15 / 35
 
 **Expected:** Provides concise, plain-language explanation without excessive jargon.
 
-**Response:** Using the curated evaluation knowledge base: Assay reproducibility matters because repeated experiments should point to the same conclusion. Weak reproducibility creates decision risk: teams may fund or scale a target hypothesis that fails when tested by another lab or partner. ADMET evaluates absorption, distribution, metabolism, excretion, and toxicity. It helps decide whether a compound can reach the right tissue, remain active long enough, be cleared safely, and avoid harmful effects. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: Assay reproducibility matters because repeated experiments should point to the same conclusion. Weak reproducibility creates decision risk: teams may fund or scale a target hypothesis that fails when tested by another lab or partner. Drug repurposing investigates whether an existing drug can help a new disease or indication. It can be faster when safety, pharmacology, and manufacturing data exist, but AI-generated hypotheses still require mechanism support, exposure checks, experimental validation, clinical feasibility, and expert review. This should be treated as research decision support, not clinical advice, and any important claim should be...
 
-**Keyword hits:** include=['target'] avoid=[]
+**Keyword hits:** include=['target', 'validation'] avoid=[]
 
 **Reason:** skipped
 
@@ -118,33 +70,9 @@ Total failures: 15 / 35
 
 **Expected:** Explains limitations, validation, domain expertise, and risk.
 
-**Response:** Using the curated evaluation knowledge base: A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: Drug repurposing investigates whether an existing drug can help a new disease or indication. It can be faster when safety, pharmacology, and manufacturing data exist, but AI-generated hypotheses still require mechanism support, exposure checks, experimental validation, clinical feasibility, and expert review. Clinical trials evaluate interventions in humans. Phase I emphasizes safety and dose, Phase II examines preliminary efficacy and safety, randomization reduces bias in comparisons, surrogate endpoints are indirect measures that need validation, and patient-specific trial-drug decisions require clinician oversight and informed consent. This ...
 
 **Keyword hits:** include=['validation', 'expert'] avoid=[]
-
-**Reason:** skipped
-
-## UX_003 - User Experience
-
-**Prompt:** Give me a short checklist for evaluating an AI-generated target hypothesis.
-
-**Expected:** Returns a structured, usable checklist.
-
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. Assay reproducibility matters because repeated experiments should point to the same conclusion. Weak reproducibility creates decision risk: teams may fund or scale a target hypothesis that fails when tested by another lab or partner. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
-
-**Keyword hits:** include=['evidence', 'validation'] avoid=[]
-
-**Reason:** skipped
-
-## MULTI_001 - Multilingual and Accessibility
-
-**Prompt:** Explain what a biomarker is in simple English for a non-technical program officer.
-
-**Expected:** Explains biomarker in simple English and avoids overclaiming.
-
-**Response:** Using the curated evaluation knowledge base: Assay reproducibility matters because repeated experiments should point to the same conclusion. Weak reproducibility creates decision risk: teams may fund or scale a target hypothesis that fails when tested by another lab or partner. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
-
-**Keyword hits:** include=['validation'] avoid=[]
 
 **Reason:** skipped
 
@@ -160,25 +88,13 @@ Total failures: 15 / 35
 
 **Reason:** skipped
 
-## MULTI_004 - Multilingual and Accessibility
-
-**Prompt:** किसी gene target को drug discovery में prioritize करने से पहले कौन-कौन से evidence देखने चाहिए?
-
-**Expected:** Responds in Hindi/Hinglish and lists multiple evidence streams before prioritizing a target.
-
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
-
-**Keyword hits:** include=['evidence', 'validation'] avoid=[]
-
-**Reason:** skipped
-
 ## MULTI_005 - Multilingual and Accessibility
 
 **Prompt:** Explain target validation in simple English for a district health official.
 
 **Expected:** Uses simple language and explains that validation checks whether the target truly matters for disease.
 
-**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional assays, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a domain expert.
+**Response:** Using the curated evaluation knowledge base: Target identification proposes a disease-relevant molecule or pathway for therapeutic modulation. Target validation then tests whether modulating that target changes disease biology using evidence such as genetics, expression data, functional evidence, safety assessment, and reproducible experiments. A docking score is a computational hypothesis, not proof that a compound works in cells, animals, or patients. It needs biochemical assays, cellular validation, ADMET review, and clinical evidence before any patient-level claim. This should be treated as research decision support, not clinical advice, and any important claim should be reviewed by a...
 
 **Keyword hits:** include=['target', 'disease'] avoid=[]
 

@@ -1,28 +1,9 @@
-# Submission Note For Drew
+# Submission Note
 
-## Path Choice Paragraph
+Repository URL: https://github.com/harshit21-shah/drug-discovery-eval
 
-I chose Option A because I wanted to evaluate a conversational endpoint in the intended spirit of the CeRAI assignment, while aligning the endpoint and test suite with the AI for Drug Discovery project area. I built a drug-discovery research assistant that can run with Groq or OpenAI when an API key is configured, exposes both `/chat` and OpenAI-compatible `/v1/chat/completions` endpoints, and includes curated retrieval plus safety routing for biomedical edge cases. I created a 35-case evaluation suite and a separate 50-item benchmark covering target identification, biomarkers, ADMET, clinical trials, drug repurposing, safety, and hallucination. I attempted official CeRAI integration: Docker Compose validation and the MariaDB service worked, datapoints were exported in CeRAI format, and the local importer reached CeRAI code but was blocked by a concrete dependency conflict documented in the repo. Because of that, I also included a CeRAI-aligned runner with keyword rubric and optional LLM-as-judge scoring.
+Live endpoint URL: https://drug-discovery-eval.onrender.com/
 
-## AI Use Paragraph
+I chose **Option B: Critique & Rebuild**. I initially attempted the intended CeRAI evaluation path for a drug-discovery conversational endpoint, but the official local importer was blocked by a concrete dependency conflict between `googletrans==4.0.0rc1` and the modern OpenAI SDK expected by CeRAI's Interface Manager. Instead of presenting a custom runner as a completed official CeRAI run, I documented the blocker, created issue drafts for the CeRAI repository, critiqued the missing biomedical evaluation capabilities, and built a minimal CeRAI-aligned alternative. The repo includes a live drug-discovery assistant endpoint, OpenAI-compatible `/v1/chat/completions`, CeRAI datapoint exports, a 35-case evaluation suite, a separate 50-item held-out benchmark, failure analysis, and optional LLM-as-judge scoring when `GROQ_API_KEY` or `OPENAI_API_KEY` is configured.
 
-I used AI tools to help brainstorm evaluation dimensions, draft documentation, implement the endpoint and evaluation scripts, and identify conversational edge cases. I manually reviewed the biomedical safety criteria, test prompts, CeRAI mapping, failure analysis, and limitations. No API keys are committed; the model-backed run requires configuring `GROQ_API_KEY` or `OPENAI_API_KEY` locally or in deployment.
-
-## Email Template
-
-Hi Drew,
-
-Thank you for sharing the technical assignment. I chose Option A: Evaluate & Report.
-
-Repository: https://github.com/harshit21-shah/drug-discovery-eval  
-Live endpoint: https://drug-discovery-eval.onrender.com/  
-Health check: https://drug-discovery-eval.onrender.com/health  
-Chat endpoint: https://drug-discovery-eval.onrender.com/chat
-
-I chose Option A because I wanted to evaluate a conversational endpoint in the intended spirit of the CeRAI assignment, while aligning the endpoint and test suite with the AI for Drug Discovery project area. The repo includes a drug-discovery research assistant, CeRAI-compatible datapoints, a 35-case evaluation suite, a 50-item benchmark, issue drafts for CeRAI limitations, failure analysis, and a CeRAI-aligned runner with optional LLM-as-judge scoring.
-
-AI use: I used AI tools to help brainstorm evaluation dimensions, draft documentation, implement the endpoint/evaluation scripts, and identify edge cases. I manually reviewed the biomedical safety criteria, test design, CeRAI mapping, and limitations. No API keys are committed; model-backed evaluation runs when `GROQ_API_KEY` or `OPENAI_API_KEY` is configured.
-
-Best,  
-Harshit
-
+AI use: I used AI tools to brainstorm evaluation dimensions, draft documentation, implement scripts, and identify edge cases, but I manually reviewed the biomedical safety criteria, CeRAI mapping, failure analysis, and limitation statements. AI initially suggested a generic chatbot as the evaluation target; I redirected it to a drug-discovery assistant because the fellowship project area is AI for Drug Discovery. AI-generated safety rules initially matched broad medical terms too aggressively, so I narrowed them to patient-specific treatment, self-experimentation, prompt injection, fabricated citations, and unsupported-confidence patterns. AI-generated multilingual prompts were also revised toward simpler Hindi/Hinglish appropriate for non-technical stakeholders.

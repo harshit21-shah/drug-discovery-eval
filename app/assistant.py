@@ -38,13 +38,13 @@ def _deterministic_fallback(prompt: str, context: str | None) -> str:
 
     if "admet" in lowered:
         return (
-            "ADMET describes absorption, distribution, metabolism, excretion, and toxicity—how a compound "
-            "behaves in the body. It is an early filter, not proof of clinical benefit."
+            "ADMET describes absorption, distribution, metabolism, excretion, and toxicity: how a compound "
+            "behaves in the body. It is an early development filter, not proof of clinical benefit."
         )
     if "target identification" in lowered:
         return (
-            "Target identification finds a disease-relevant molecule or pathway; strong hypotheses combine "
-            "genetics, disease biology, expression, functional data, and validation evidence."
+            "Target identification finds a disease-relevant molecule or pathway for therapeutic modulation; "
+            "strong hypotheses combine genetics, disease biology, expression, functional data, and validation evidence."
         )
     if context:
         return context
