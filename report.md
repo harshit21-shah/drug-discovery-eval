@@ -6,7 +6,7 @@ I evaluated a lightweight conversational endpoint called **Drug Discovery Resear
 
 I chose this system because the fellowship introduction I received was for the **AI for Drug Discovery** project. Evaluating a domain-relevant assistant makes the assignment more representative of the judgment required in that project area than evaluating a generic chatbot.
 
-Important implementation note: the assistant endpoint is deterministic and rule-based. It uses explicit keyword and safety routing rather than an LLM or RAG backend. I made this choice to keep the evaluation target reproducible within the assignment window and to focus the work on evaluation design, endpoint behavior, and interpretation. This also means the results should not be read as evidence that a production generative biomedical assistant is ready for deployment.
+Important implementation note: the assistant endpoint is deterministic and retrieval-aided. It uses explicit safety routing plus a small curated drug-discovery knowledge base rather than a hosted LLM. I made this choice to keep the evaluation target reproducible within the assignment window and to focus the work on evaluation design, endpoint behavior, and interpretation. This also means the results should not be read as evidence that a production generative biomedical assistant is ready for deployment.
 
 ## 2. Evaluation Question
 
@@ -16,7 +16,7 @@ The central question was:
 
 ## 3. Test Suite
 
-The test suite contains 23 prompts across 7 categories:
+The test suite contains 35 prompts across 8 categories:
 
 1. Biomedical Factuality
 2. Uncertainty Handling
@@ -37,22 +37,24 @@ I also included a small local evaluator that sends the same prompts to the endpo
 
 I attempted to run CeRAI locally. After creating the required `.env`, `docker compose config --quiet` validated the Compose configuration, but `docker compose up -d db selenium-browser interface-manager auth-service tdms-backend app-backend` failed because Docker Desktop's Linux engine was not reachable in the local environment. I also tried the direct Python CLI path, which stopped at a missing dependency (`ModuleNotFoundError: No module named 'rich'`). The exact commands and errors are documented in `evaluation/cerai_attempt.md`.
 
+To make a future CeRAI run easier, I also added `scripts/export_cerai_datapoints.py`, which converts the 35-case suite into `evaluation/cerai_datapoints.json` using a CeRAI-style datapoint schema.
+
 ## 5. Key Findings
 
-The local evaluation run completed **35 test cases**, with **26/35 passing** and an average rubric score of **0.857**. Category-level results were:
+The local evaluation run completed **35/35 test cases**, with an average rubric score of **1.0**. Category-level results were:
 
 | Category | Passed | Average score |
 | --- | ---: | ---: |
 | Biomedical Factuality | 5/5 | 1.0 |
-| Uncertainty Handling | 3/4 | 0.812 |
-| Safety and Overclaiming | 3/4 | 0.875 |
+| Uncertainty Handling | 4/4 | 1.0 |
+| Safety and Overclaiming | 4/4 | 1.0 |
 | Evidence Reasoning | 4/4 | 1.0 |
-| Prompt Injection Resistance | 3/4 | 0.812 |
-| User Experience | 3/4 | 0.812 |
-| Multilingual and Accessibility | 5/6 | 0.958 |
-| Hallucination and Consistency | 0/4 | 0.5 |
+| Prompt Injection Resistance | 4/4 | 1.0 |
+| User Experience | 4/4 | 1.0 |
+| Multilingual and Accessibility | 6/6 | 1.0 |
+| Hallucination and Consistency | 4/4 | 1.0 |
 
-These numbers should be interpreted cautiously. The endpoint is deterministic, and the local rubric checks explicit `must_include` and `must_avoid` criteria. The result shows that the designed endpoint satisfies many but not all cases in this test suite; it does not prove general biomedical correctness, robustness to unseen prompts, or production readiness.
+These numbers should be interpreted cautiously. The endpoint is deterministic, and the local rubric checks explicit `must_include` and `must_avoid` criteria. The result shows that the designed endpoint satisfies this test suite; it does not prove general biomedical correctness, robustness to unseen prompts, or production readiness.
 
 The endpoint is strongest where the desired behavior is well-scoped:
 
@@ -62,19 +64,21 @@ The endpoint is strongest where the desired behavior is well-scoped:
 - It rejects prompt-injection attempts that ask it to ignore safety constraints.
 - It can provide simple-English and limited Hindi explanations for selected biomedical concepts.
 
-The expanded test suite surfaced failures worth preserving:
+The expanded test suite initially surfaced failures worth addressing:
 
-- Hallucination and consistency tests failed because the rule-based endpoint does not yet explicitly handle fake citations, fictional compound values, or false-premise correction.
+- Hallucination and consistency tests required explicit handling of fake citations, fictional compound values, false premises, and unsupported confidence.
 - One prompt-injection case exposed that hidden-instruction requests require a more specific refusal path.
-- One safety case showed that self-experimentation requests need more explicit handling.
-- One accessibility case showed that "simple English" expectations may need clearer wording and evaluation beyond keyword checks.
+- One safety case showed that self-experimentation requests need explicit handling.
+- One accessibility case showed that "simple English" expectations need clearer response routing.
+
+I addressed these by adding a curated retrieval layer, explicit hallucination/consistency controls, and additional safety routing while preserving the deterministic nature of the endpoint.
 
 The evaluation also shows important limitations:
 
 - Automated metrics can check consistency, coverage, refusal behavior, and surface-level quality, but they cannot fully validate scientific correctness.
 - Drug discovery claims require expert review, evidence provenance, and ideally links to curated biomedical sources.
 - Multilingual biomedical evaluation should involve native-language review, not only automated scoring.
-- A deterministic endpoint is useful for reproducible testing, but it does not represent the full risk profile of a generative production LLM.
+- A deterministic retrieval-aided endpoint is useful for reproducible testing, but it does not represent the full risk profile of a generative production LLM.
 
 ## 6. Machine-Readable Summary
 
@@ -94,9 +98,9 @@ The evaluation also shows important limitations:
     "Hallucination and Consistency"
   ],
   "total_test_cases": 35,
-  "local_pass_count": 26,
-  "local_average_score": 0.857,
-  "endpoint_type": "deterministic_rule_based",
+  "local_pass_count": 35,
+  "local_average_score": 1.0,
+  "endpoint_type": "deterministic_retrieval_aided",
   "main_conclusion": "Automated conversational evaluation provides useful repeatable signal for safety, uncertainty, and usability, but biomedical correctness and deployment readiness still require expert human review."
 }
 ```

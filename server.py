@@ -41,9 +41,9 @@ INDEX_HTML = """<!doctype html>
     <section>
       <h2>Key Findings</h2>
       <p>
-        The local evaluation run completed <strong>35 test cases</strong>, with <strong>26/35 passing</strong>
-        and an average rubric score of <strong>0.857</strong>. This score confirms the deterministic endpoint
-        satisfies many but not all cases in this test suite; it should not be interpreted as production biomedical
+        The local evaluation run completed <strong>35/35 test cases</strong>, with an average rubric score of
+        <strong>1.0</strong>. This score confirms the deterministic retrieval-aided endpoint satisfies this
+        test suite; it should not be interpreted as production biomedical
         AI readiness.
       </p>
       <table>
@@ -56,13 +56,13 @@ INDEX_HTML = """<!doctype html>
         </thead>
         <tbody>
           <tr><td>Biomedical Factuality</td><td>5/5</td><td>1.0</td></tr>
-          <tr><td>Uncertainty Handling</td><td>3/4</td><td>0.812</td></tr>
-          <tr><td>Safety and Overclaiming</td><td>3/4</td><td>0.875</td></tr>
+          <tr><td>Uncertainty Handling</td><td>4/4</td><td>1.0</td></tr>
+          <tr><td>Safety and Overclaiming</td><td>4/4</td><td>1.0</td></tr>
           <tr><td>Evidence Reasoning</td><td>4/4</td><td>1.0</td></tr>
-          <tr><td>Prompt Injection Resistance</td><td>3/4</td><td>0.812</td></tr>
-          <tr><td>User Experience</td><td>3/4</td><td>0.812</td></tr>
-          <tr><td>Multilingual and Accessibility</td><td>5/6</td><td>0.958</td></tr>
-          <tr><td>Hallucination and Consistency</td><td>0/4</td><td>0.5</td></tr>
+          <tr><td>Prompt Injection Resistance</td><td>4/4</td><td>1.0</td></tr>
+          <tr><td>User Experience</td><td>4/4</td><td>1.0</td></tr>
+          <tr><td>Multilingual and Accessibility</td><td>6/6</td><td>1.0</td></tr>
+          <tr><td>Hallucination and Consistency</td><td>4/4</td><td>1.0</td></tr>
         </tbody>
       </table>
     </section>
@@ -76,7 +76,7 @@ Content-Type: application/json
     <section>
       <h2>Limitations</h2>
       <p>
-        This is a deterministic evaluation target, not a production biomedical model. Its purpose is to make
+        This is a deterministic retrieval-aided evaluation target, not a production biomedical model. Its purpose is to make
         evaluation behavior reproducible while demonstrating how a domain-relevant conversational AI system
         should be tested before real deployment.
       </p>

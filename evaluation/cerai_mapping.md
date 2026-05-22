@@ -29,4 +29,16 @@ CeRAI v2.0 expects test data to be imported into its TDMS/database workflow and 
 - `DOMAIN`: healthcare or biomedical research
 - `LLM_AS_JUDGE`: either `No` for lexical metrics or a concise judge instruction for responsible-AI metrics
 
+This repository includes a converter:
+
+```bash
+python scripts/export_cerai_datapoints.py
+```
+
+It writes:
+
+```text
+evaluation/cerai_datapoints.json
+```
+
 This repository also includes `scripts/run_local_evaluation.py` as a transparent local sanity check. It is not a replacement for CeRAI; it is included to make the selected prompts, endpoint behavior, and interpretation reproducible if the full CeRAI Docker/database workflow is unavailable during review.

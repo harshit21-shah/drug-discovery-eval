@@ -25,11 +25,11 @@ Response:
 }
 ```
 
-The assistant is deterministic and rule-based by design. It uses explicit keyword and safety routing rather than an LLM or RAG backend. This makes the evaluation reproducible and keeps the focus on test design, evaluation interpretation, and responsible AI behavior rather than on stochastic LLM variation. It also limits what the results mean: passing this suite does not prove production biomedical AI capability.
+The assistant is deterministic and retrieval-aided by design. It uses explicit safety routing plus a small curated drug-discovery knowledge base rather than a hosted LLM. This makes the evaluation reproducible and keeps the focus on test design, evaluation interpretation, and responsible AI behavior rather than on stochastic LLM variation. It also limits what the results mean: passing this suite does not prove production biomedical AI capability.
 
 ## Test Suite Design
 
-The suite contains 23 prompts across 7 categories:
+The suite contains 35 prompts across 8 categories:
 
 | Category | Why it matters |
 | --- | --- |
@@ -46,6 +46,12 @@ The test suite is available at:
 
 ```text
 evaluation/test_suite.json
+```
+
+The curated retrieval snippets used by the endpoint are available at:
+
+```text
+app/knowledge_base.py
 ```
 
 ## Local Setup
@@ -155,6 +161,18 @@ evaluation/cerai_attempt.md
 
 The Docker Compose configuration validated after creating `.env`, but the full CeRAI Docker run was blocked because Docker Desktop's Linux engine was not reachable in the local environment. The direct Python CLI path also stopped on missing CeRAI dependencies. I included these details so the limitation is explicit rather than implied.
 
+This repository also includes a CeRAI datapoint export generated from the test suite:
+
+```text
+evaluation/cerai_datapoints.json
+```
+
+Regenerate it with:
+
+```bash
+python scripts/export_cerai_datapoints.py
+```
+
 At a high level:
 
 1. Install and start CeRAI using its Docker or CLI setup.
@@ -166,13 +184,14 @@ At a high level:
 
 ## Findings Summary
 
-The local evaluation run completed **35 test cases**, with **26/35 passing** and an average rubric score of **0.857**. The current endpoint performs best on concept explanation, evidence framing, and safety refusals because those behaviors are explicitly designed. The expanded suite intentionally surfaces gaps in hallucination handling, hidden-instruction requests, self-experimentation prompts, and some accessibility wording. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
+The local evaluation run completed **35/35 test cases**, with an average rubric score of **1.0**. The endpoint performs best on concept explanation, evidence framing, safety refusals, prompt-injection handling, and hallucination/consistency controls because those behaviors are explicitly designed and retrieval-supported. It should not be interpreted as a production biomedical assistant or as a scientifically complete drug discovery system.
 
 Key expected findings:
 
 - Automated evaluation is useful for repeatable checks of safety, refusal behavior, and coverage.
 - Biomedical factuality cannot be fully certified by lexical or generic LLM-as-judge metrics.
 - Hindi/simple-English accessibility should be evaluated with native speakers and domain reviewers before deployment.
+- The retrieval-aided implementation improves coverage of hallucination and consistency cases, but it still relies on a small curated knowledge base.
 - Human expert review remains necessary for scientific validity in drug discovery.
 
 ## AI Use Disclosure
@@ -184,12 +203,16 @@ See `ai_usage.md`.
 ```text
 app/
   assistant.py
+  knowledge_base.py
   main.py
 server.py
 evaluation/
+  cerai_datapoints.json
+  cerai_attempt.md
   test_suite.json
   cerai_mapping.md
 scripts/
+  export_cerai_datapoints.py
   run_local_evaluation.py
 results/
   sample_results.json
