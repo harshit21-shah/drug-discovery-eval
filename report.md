@@ -70,6 +70,14 @@ The benchmark result is intentionally lower than the main suite result. That is 
 **Judge:** skipped  
 **Environment:** no-secret fallback mode with `DISABLE_LLM=1`
 
+No model-backed result is committed because no active `GROQ_API_KEY` or `OPENAI_API_KEY` is available in this repository or runtime, and a previously exposed secret-like key was intentionally not reused. The reproducible command for a model-backed run is:
+
+```bash
+python scripts/run_cerai_evaluation.py --endpoint http://127.0.0.1:8000/chat --output results/model_backed_subset_results.json
+```
+
+That run should be added after configuring a fresh private key in `.env` or the deployment environment.
+
 ### Main 35-Case Suite
 
 | Metric | Value |
