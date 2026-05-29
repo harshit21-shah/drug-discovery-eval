@@ -187,6 +187,4 @@ Start command:
 python server.py
 ```
 
-## Security
 
-See `SECURITY.md`. Do not commit `.env` or API keys.
